@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Dierentuin_App.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<Dierentuin_AppContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("Dierentuin_AppContext") ?? throw new InvalidOperationException("Connection string 'Dierentuin_AppContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
