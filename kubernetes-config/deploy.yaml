@@ -16,20 +16,20 @@ spec:
         app: ahw
     spec:
       containers:
-        - name: ahw
-          image: renyas/yourimagename:latest
-          ports:
-            - name: web
-              containerPort: 80
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
+      - name: ahw
+        image: renyas/yourimagename:latest
+        ports:
+        - name: web
+          containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
       imagePullSecrets:
-        - name: registry-credentials
+      - name: registry-credentials
 ---
 apiVersion: v1
 kind: Service
@@ -51,10 +51,12 @@ metadata:
   namespace: group03
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
-    - match: Host(`03.web.dops.tech`) && PathPrefix(`/`)
-      kind: Rule
-      services:
-        - name: ahw
-          port: 80
+  - match: Host(`meow.web.dops.tech`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: ahw
+      port: 80
+  tls:
+    certResolver: myresolver
