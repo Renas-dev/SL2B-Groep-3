@@ -1,14 +1,10 @@
-# Use the appropriate base image for ARM64
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base-arm64
+# Use a multi-platform base image for the runtime
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 80
 
-# Use the appropriate base image for x64
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base-x64
-WORKDIR /app
-EXPOSE 8080
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Use a multi-platform base image for the build
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
@@ -35,7 +31,7 @@ WORKDIR "/src/Dierentuin-App"
 RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Final stage
-FROM base-arm64 AS final
-WORKDIR /app
+FROM base AS final
+WORKDIR /var/www/html
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
