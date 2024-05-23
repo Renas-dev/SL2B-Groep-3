@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Dierentuin_App.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<Dierentuin_AppContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("Dierentuin_AppContext") ?? throw new InvalidOperationException("Connection string 'Dierentuin_AppContext' not found.")));
@@ -25,4 +26,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+// Make the application listen on port 80
+app.Run("http://*:80");
