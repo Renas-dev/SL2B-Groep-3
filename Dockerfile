@@ -1,4 +1,10 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+# Use the appropriate base image for ARM64
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base-arm64
+WORKDIR /app
+EXPOSE 8080
+
+# Use the appropriate base image for x64
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base-x64
 WORKDIR /app
 EXPOSE 8080
 
@@ -23,12 +29,21 @@ COPY Dierentuin-unit-test/ Dierentuin-unit-test/
 WORKDIR "/src/Dierentuin-unit-test"
 RUN dotnet test --logger:trx
 
-FROM build AS publish
+FROM build AS publish-arm64
 WORKDIR "/src/Dierentuin-App"
 RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+FROM build AS publish-x64
+WORKDIR "/src/Dierentuin-App"
+RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-FROM base AS final
+# Combine ARM64 and x64 publish stages
+FROM base-arm64 AS final-arm64
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish-arm64 /app/publish .
+ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
+
+FROM base-x64 AS final-x64
+WORKDIR /app
+COPY --from=publish-x64 /app/publish .
 ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]

@@ -1,0 +1,60 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ahw
+  namespace: group03
+  labels:
+    app: ahw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ahw
+  template:
+    metadata:
+      labels:
+        app: ahw
+    spec:
+      containers:
+        - name: ahw
+          image: renyas/yourimagename:latest
+          ports:
+            - name: web
+              containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+      imagePullSecrets:
+        - name: registry-credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ahw
+  namespace: group03
+spec:
+  ports:
+    - name: web
+      port: 80
+      targetPort: web
+  selector:
+    app: ahw
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ahwroute
+  namespace: group03
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`03.web.dops.tech`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: ahw
+          port: 80
