@@ -1,6 +1,5 @@
 name: CI
 
-# Controls when the workflow will run
 on:
   push:
     branches: [ "main" ]
@@ -57,9 +56,9 @@ jobs:
       - name: Describe deployment for debug
         run: kubectl describe deployment ahw -n group03
 
-      - name: Deploy to Kubernetes
+      - name: Deploy to Kubernetes using kubectl patch
         env:
           DEPLOYMENT_NAME: ahw
           NAMESPACE: group03
         run: |
-          kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} ${{ env.DEPLOYMENT_NAME }}=renyas/yourimagename:latest -n ${{ env.NAMESPACE }}
+          kubectl patch deployment ${{ env.DEPLOYMENT_NAME }} -n ${{ env.NAMESPACE }} --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":"renyas/yourimagename:latest"}]'
