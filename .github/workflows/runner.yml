@@ -25,13 +25,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      # Create and bootstrap builder
-      - name: Create and bootstrap builder
-        run: |
-          docker buildx create --name mybuilder --use
-          docker buildx inspect --bootstrap
-          docker buildx ls
-
       # Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
@@ -39,7 +32,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Build and push the Docker image for arm64
+      # Build and push the Docker image using docker/build-push-action
       - name: Build and push Docker image
-        run: |
-          docker buildx build --platform linux/arm64 -t renyas/yourimagename:latest --push .
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: renyas/yourimagename:latest
