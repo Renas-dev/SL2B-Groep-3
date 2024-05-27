@@ -43,13 +43,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      
+
       # Build and push the Docker image
       - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: linux/arm64
-          push: true
-          tags: renyas/yourimagename:latest
+        run: |
+          docker buildx build --platform linux/arm64 -t renyas/yourimagename:latest --push .
