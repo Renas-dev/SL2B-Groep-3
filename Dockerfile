@@ -1,18 +1,16 @@
 # Use a multi-platform base image for the runtime
-FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-# Use a specific version of the multi-platform base image for the build
-FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/sdk:8.0.204 AS build
+# Use a multi-platform base image for the build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copy the project file and restore as distinct layers
+# Copy and build Dierentuin-App
 COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
 RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj"
-
-# Copy and build Dierentuin-App
 COPY Dierentuin-App/ Dierentuin-App/
 WORKDIR "/src/Dierentuin-App"
 RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
