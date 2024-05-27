@@ -3,8 +3,8 @@ FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-# Use a multi-platform base image for the build
-FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Use a specific version of the multi-platform base image for the build
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/sdk:8.0.204 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
