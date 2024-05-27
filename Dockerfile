@@ -29,13 +29,22 @@ RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/publi
 # Final stage
 FROM --platform=$TARGETARCH mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
+
+# Set root user to install dependencies
+USER root
+
 COPY --from=publish /app/publish .
 
-# Set user
-USER $APP_UID
-ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
+# Create a non-root user and group
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 
-# Update the application to listen on port 8080
-ENV ASPNETCORE_URLS=http://+:80
+# Set the user to the newly created non-root user
+USER appuser
+
+# Set environment variable for ASP.NET Core to use port 8080
+ENV ASPNETCORE_URLS=http://+:8080
+
+# Expose port 8080
+EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
