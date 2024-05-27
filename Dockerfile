@@ -8,6 +8,9 @@ FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
+# Install QEMU for ARM emulation
+RUN apt-get update && apt-get install -y qemu-user-static
+
 # Copy and build Dierentuin-App
 COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
 RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj"
@@ -35,3 +38,4 @@ FROM base AS final
 WORKDIR /var/www/html
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
+	
