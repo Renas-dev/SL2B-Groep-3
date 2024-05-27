@@ -3,8 +3,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-# Use the latest stable version of the multi-platform base image for the build
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Use a specific stable version of the multi-platform base image for the build
+FROM mcr.microsoft.com/dotnet/sdk:8.0.200 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
@@ -15,6 +15,7 @@ RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --verbosity detailed
 COPY Dierentuin-App/ Dierentuin-App/
 WORKDIR "/src/Dierentuin-App"
 RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
 # Switch back to /src
 WORKDIR /src
 
