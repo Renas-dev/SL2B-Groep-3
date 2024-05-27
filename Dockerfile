@@ -31,8 +31,9 @@ FROM --platform=$TARGETARCH mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Change to a non-root user
-USER appuser
+# Set user
+USER $APP_UID
+ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
 
 # Update the application to listen on port 8080
 ENV ASPNETCORE_URLS=http://+:80
