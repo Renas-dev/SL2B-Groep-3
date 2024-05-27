@@ -12,9 +12,6 @@ WORKDIR /src
 RUN dotnet --info
 RUN env
 
-# Copy the NuGet.config file to the container
-COPY NuGet.config ./
-
 # Copy the project file and show its contents for debugging
 COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
 RUN ls -la
@@ -25,8 +22,8 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 ENV DOTNET_NOLOGO=1
 
-# Attempt to restore with detailed verbosity using the NuGet.config file
-RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --configfile ./NuGet.config --verbosity diagnostic || cat /root/.nuget/packages/*.log
+# Attempt to restore with detailed verbosity
+RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --verbosity diagnostic
 
 # If the restore is successful, proceed
 COPY Dierentuin-App/ Dierentuin-App/
@@ -38,7 +35,7 @@ WORKDIR /src
 
 # Copy and test Dierentuin-unit-test
 COPY ["Dierentuin-unit-test/Dierentuin-unit-test.csproj", "Dierentuin-unit-test/"]
-RUN dotnet restore "Dierentuin-unit-test/Dierentuin-unit-test.csproj" --configfile ./NuGet.config --verbosity diagnostic || cat /root/.nuget/packages/*.log
+RUN dotnet restore "Dierentuin-unit-test/Dierentuin-unit-test.csproj" --verbosity diagnostic
 COPY Dierentuin-unit-test/ Dierentuin-unit-test/
 WORKDIR "/src/Dierentuin-unit-test"
 RUN dotnet test --logger:trx
