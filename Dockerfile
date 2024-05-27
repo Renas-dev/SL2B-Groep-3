@@ -14,7 +14,9 @@ RUN dotnet --info
 RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --verbosity detailed
 COPY Dierentuin-App/ Dierentuin-App/
 WORKDIR "/src/Dierentuin-App"
-RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION --no-restore -o /app/build
+RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# Switch back to /src
+WORKDIR /src
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
