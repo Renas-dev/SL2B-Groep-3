@@ -9,7 +9,10 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted-arm64
+    runs-on: 
+      - self-hosted
+      - ARM64
+      - docker-build
 
     steps:
       - uses: actions/checkout@v3
