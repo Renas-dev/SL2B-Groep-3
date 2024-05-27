@@ -51,9 +51,15 @@ jobs:
       - name: Configure kubeconfig
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
+      - name: Verify Kubernetes context
+        run: kubectl config current-context
+
+      - name: Describe deployment for debug
+        run: kubectl describe deployment ahw -n group03
+
       - name: Deploy to Kubernetes
         env:
-          DEPLOYMENT_NAME: ahw  # Deployment name identified from your details
-          NAMESPACE: group03  # Namespace inferred from your previous details
+          DEPLOYMENT_NAME: ahw
+          NAMESPACE: group03
         run: |
           kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} ${{ env.DEPLOYMENT_NAME }}=renyas/yourimagename:latest -n ${{ env.NAMESPACE }}
