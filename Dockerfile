@@ -20,6 +20,11 @@ COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
 RUN ls -la
 RUN cat Dierentuin-App/Dierentuin-App.csproj
 
+# Explicitly set environment variables
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
+ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+ENV DOTNET_NOLOGO=1
+
 # Attempt to restore with detailed verbosity using the NuGet.config file
 RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --configfile ./NuGet.config --verbosity diagnostic || cat /root/.nuget/packages/*.log
 
@@ -46,5 +51,5 @@ RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION --verbosity d
 # Final stage
 FROM base AS final
 WORKDIR /var/www/html
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
