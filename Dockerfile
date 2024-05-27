@@ -28,9 +28,13 @@ RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/publi
 
 # Final stage
 FROM --platform=$TARGETARCH mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /var/www/html
+WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Set user
-USER $APP_UID
+# Change to a non-root user
+USER appuser
+
+# Update the application to listen on port 8080
+ENV ASPNETCORE_URLS=http://+:8080
+
 ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
