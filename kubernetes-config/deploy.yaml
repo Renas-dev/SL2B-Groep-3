@@ -1,24 +1,23 @@
-apiVersion: apps/v1
 kind: Deployment
+apiVersion: apps/v1
 metadata:
-  name: ahw
+  name: group03
   namespace: group03
   labels:
-    app: ahw
+    app: group03
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ahw
+      app: group03
   template:
     metadata:
       labels:
-        app: ahw
+        app: group03
     spec:
       containers:
-      - name: ahw
+      - name: group03
         image: renyas/yourimagename:latest
-        imagePullPolicy: Always
         ports:
         - name: web
           containerPort: 80
@@ -29,13 +28,11 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
-      imagePullSecrets:
-      - name: groep3-credentials
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ahw
+  name: group03
   namespace: group03
 spec:
   ports:
@@ -43,12 +40,12 @@ spec:
       port: 80
       targetPort: web
   selector:
-    app: ahw
+    app: group03
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: ahwroute
+  name: group03route
   namespace: group03
 spec:
   entryPoints:
@@ -57,7 +54,7 @@ spec:
   - match: Host(`meow.web.dops.tech`) && PathPrefix(`/`)
     kind: Rule
     services:
-    - name: ahw
+    - name: group03
       port: 80
   tls:
     certResolver: myresolver
