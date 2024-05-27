@@ -1,5 +1,5 @@
 # Use a multi-platform base image for the build
-FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/sdk:8.0.200 AS build
 WORKDIR /src
 
 # Print diagnostic information
@@ -15,7 +15,7 @@ WORKDIR "/src/Dierentuin-App"
 RUN dotnet build "Dierentuin-App.csproj" -c Release -o /app/build --verbosity detailed
 
 # Final stage
-FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/aspnet:8.0.200 AS base
 WORKDIR /app
 COPY --from=build /app/build .
 ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
