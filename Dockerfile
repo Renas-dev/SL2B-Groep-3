@@ -8,10 +8,19 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
+# Debug step: Display .NET SDK info and environment variables
+RUN dotnet --info
+RUN env
+
 # Copy and build Dierentuin-App
 COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
-RUN dotnet --info
+# Debug step: Show the content of the csproj file
+RUN cat Dierentuin-App/Dierentuin-App.csproj
+
+# Attempt to restore
 RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --verbosity detailed
+
+# If the restore is successful, proceed
 COPY Dierentuin-App/ Dierentuin-App/
 WORKDIR "/src/Dierentuin-App"
 RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
