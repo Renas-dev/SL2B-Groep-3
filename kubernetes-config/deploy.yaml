@@ -20,7 +20,7 @@ spec:
         image: renyas/yourimagename:latest
         ports:
         - name: web
-          containerPort: 8080 # Updated to 8080
+          containerPort: 80
         resources:
           requests:
             memory: "64Mi"
@@ -36,9 +36,9 @@ metadata:
   namespace: group03
 spec:
   ports:
-    - name: web
-      port: 80
-      targetPort: 8080 # Updated to 8080
+  - name: web
+    port: 80
+    targetPort: web
   selector:
     app: group03
 ---
@@ -49,7 +49,7 @@ metadata:
   namespace: group03
 spec:
   entryPoints:
-    - websecure
+  - websecure
   routes:
   - match: Host(`meow.web.dops.tech`) && PathPrefix(`/`)
     kind: Rule
