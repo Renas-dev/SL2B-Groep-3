@@ -52,3 +52,6 @@ jobs:
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
           kubectl rollout status deployment/group03 -n group03
+
+      - name: Restart Deployment
+        run: kubectl rollout restart deployment/group03 -n group03
