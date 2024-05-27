@@ -23,20 +23,16 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-
       # Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      
+
+      # Create and bootstrap the builder instance
+      - name: Create and bootstrap builder
+        run: |
+          docker buildx create --name mybuilder --use
+          docker buildx inspect --bootstrap
+
       # Log in to Docker Hub (to push the image)
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
