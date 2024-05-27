@@ -8,45 +8,33 @@ FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Display .NET SDK info and environment variables for debugging
-RUN dotnet --info
-RUN env
-
-# Copy the project file and show its contents for debugging
+# Copy the project file and restore dependencies
 COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
-RUN ls -la
-RUN cat Dierentuin-App/Dierentuin-App.csproj
+RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj"
 
-# Explicitly set environment variables
-ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
-ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-ENV DOTNET_NOLOGO=1
-
-# Attempt to restore with detailed verbosity
-RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --verbosity diagnostic
-
-# If the restore is successful, proceed
+# Copy the entire project and build the application
 COPY Dierentuin-App/ Dierentuin-App/
 WORKDIR "/src/Dierentuin-App"
-RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION --verbosity diagnostic -o /app/build
+RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Switch back to /src
+# Switch back to /src and copy the unit test project
 WORKDIR /src
-
-# Copy and test Dierentuin-unit-test
 COPY ["Dierentuin-unit-test/Dierentuin-unit-test.csproj", "Dierentuin-unit-test/"]
-RUN dotnet restore "Dierentuin-unit-test/Dierentuin-unit-test.csproj" --verbosity diagnostic
+RUN dotnet restore "Dierentuin-unit-test/Dierentuin-unit-test.csproj"
+
+# Copy the unit test project files and run the tests
 COPY Dierentuin-unit-test/ Dierentuin-unit-test/
 WORKDIR "/src/Dierentuin-unit-test"
 RUN dotnet test --logger:trx
 
+# Publish the application
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 WORKDIR "/src/Dierentuin-App"
-RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION --verbosity diagnostic -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Final stage
+# Final stage: create the runtime image
 FROM base AS final
 WORKDIR /var/www/html
-COPY --from=build /app/publish .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
