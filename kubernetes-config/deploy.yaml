@@ -20,7 +20,7 @@ spec:
         image: renyas/yourimagename:latest
         ports:
         - name: web
-          containerPort: 80
+          containerPort: 8080 # Updated to 8080
         resources:
           requests:
             memory: "64Mi"
@@ -38,7 +38,7 @@ spec:
   ports:
     - name: web
       port: 80
-      targetPort: web
+      targetPort: 8080 # Updated to 8080
   selector:
     app: group03
 ---
