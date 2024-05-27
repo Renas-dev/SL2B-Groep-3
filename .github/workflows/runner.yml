@@ -42,9 +42,11 @@ jobs:
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
 
+      - name: Create .kube directory
+        run: mkdir -p $HOME/.kube
+
       - name: Set up KUBECONFIG
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
       - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f kubernetes-config/deploy.yaml
+        run: kubectl apply -f kubernetes-config/deploy.yaml
