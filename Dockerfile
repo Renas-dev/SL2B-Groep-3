@@ -1,3 +1,4 @@
+WORKING DOCKER
 # Use a multi-platform base image for the runtime
 FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
@@ -7,11 +8,6 @@ EXPOSE 80
 FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-
-# Set environment variables
-ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
-ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-ENV DOTNET_NOLOGO=1
 
 # Copy and build Dierentuin-App
 COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
