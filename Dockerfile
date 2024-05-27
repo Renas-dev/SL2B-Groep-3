@@ -16,14 +16,11 @@ COPY Dierentuin-App/ Dierentuin-App/
 WORKDIR "/src/Dierentuin-App"
 RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Switch back to /src
-WORKDIR /src
-
 # Publish the application
 RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 
 # Final stage
 FROM base AS final
 WORKDIR /var/www/html
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
