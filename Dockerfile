@@ -8,9 +8,6 @@ FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copy the NuGet.config file to the container
-COPY NuGet.config ./
-
 # Copy and build Dierentuin-App
 COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
 RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --configfile ./NuGet.config
