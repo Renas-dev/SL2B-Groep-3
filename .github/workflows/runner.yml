@@ -43,3 +43,14 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker buildx build --platform linux/arm64 -t renyas/yourimagename:latest --push .
+
+      # Add step to check the content of the Dockerfile and context
+      - name: Check Dockerfile content
+        run: |
+          cat Dockerfile
+          ls -la
+
+      # Add step to check the Docker build logs
+      - name: Check Docker build logs
+        run: |
+          docker logs $(docker ps -a -q --filter "status=exited")
