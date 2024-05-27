@@ -53,4 +53,5 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          platforms: linux/arm64
           tags: renyas/yourimagename:latest
