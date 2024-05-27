@@ -10,7 +10,7 @@ WORKDIR /src
 
 # Copy and build Dierentuin-App
 COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
-RUN dotnet --info # To display the .NET SDK info
+RUN dotnet --info
 RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --verbosity detailed
 COPY Dierentuin-App/ Dierentuin-App/
 WORKDIR "/src/Dierentuin-App"
