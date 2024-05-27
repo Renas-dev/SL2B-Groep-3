@@ -18,6 +18,7 @@ spec:
       containers:
       - name: group03
         image: renyas/yourimagename:latest
+        imagePullPolicy: Always
         ports:
         - name: web
           containerPort: 8080
