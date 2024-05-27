@@ -49,4 +49,6 @@ jobs:
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
       - name: Deploy to Kubernetes
-        run: kubectl apply -f kubernetes-config/deploy.yaml
+        run: |
+          kubectl apply -f kubernetes-config/deploy.yaml
+          kubectl rollout status deployment/group03 -n group03
