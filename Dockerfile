@@ -1,10 +1,10 @@
 # Use the latest stable version of the multi-platform base image for the runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.200 AS base
 WORKDIR /app
 EXPOSE 80
 
 # Use the latest stable version of the multi-platform base image for the build
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0.200 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
@@ -12,13 +12,16 @@ WORKDIR /src
 RUN dotnet --info
 RUN env
 
-# Copy and build Dierentuin-App
+# Copy the NuGet.config file to the container
+COPY NuGet.config ./
+
+# Copy the project file and restore as distinct layers
 COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
 # Show the content of the csproj file for debugging
 RUN cat Dierentuin-App/Dierentuin-App.csproj
 
-# Attempt to restore with detailed verbosity
-RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --verbosity diagnostic
+# Attempt to restore with detailed verbosity using the NuGet.config file
+RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj" --configfile ./NuGet.config --verbosity diagnostic
 
 # If the restore is successful, proceed
 COPY Dierentuin-App/ Dierentuin-App/
