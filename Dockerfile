@@ -16,10 +16,11 @@ COPY Dierentuin-App/ Dierentuin-App/
 WORKDIR "/src/Dierentuin-App"
 RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-WORKDIR "/src/Dierentuin-App"
-RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION --no-restore -o /app/publish /p:UseAppHost=false
+# Switch back to /src
+WORKDIR /src
+
+# Publish the application
+RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 
 # Final stage
 FROM base AS final
