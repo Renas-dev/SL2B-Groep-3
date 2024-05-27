@@ -35,6 +35,6 @@ COPY --from=publish /app/publish .
 USER appuser
 
 # Update the application to listen on port 8080
-ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_URLS=http://+:80
 
 ENTRYPOINT ["dotnet", "Dierentuin-App.dll"]
