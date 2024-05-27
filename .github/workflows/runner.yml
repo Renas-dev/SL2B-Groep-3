@@ -34,3 +34,6 @@ jobs:
           push: true
           tags: renyas/yourimagename:latest
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            DOTNET_CLI_TELEMETRY_OPTOUT=1
+            DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
