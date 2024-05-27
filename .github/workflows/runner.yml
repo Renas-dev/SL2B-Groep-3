@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -14,18 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-          
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -41,7 +33,7 @@ jobs:
           docker buildx create --use
           docker buildx inspect --bootstrap
           docker buildx build --push -t "renyas/yourimagename:latest" \
-            --platform linux/arm64,linux/amd64 \
+            --platform linux/arm64 \
             --cache-from "type=registry,ref=renyas/yourimagename:latest" \
             --build-arg BUILDKIT_INLINE_CACHE=1 .
 
