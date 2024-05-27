@@ -1,10 +1,10 @@
-# Use the latest stable version of the multi-platform base image for the runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+# Use the 8.0.100 version of the multi-platform base image for the runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.100 AS base
 WORKDIR /app
 EXPOSE 80
 
-# Use the latest stable version of the multi-platform base image for the build
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Use the 8.0.100 version of the multi-platform base image for the build
+FROM mcr.microsoft.com/dotnet/sdk:8.0.100 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
