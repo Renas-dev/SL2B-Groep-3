@@ -8,7 +8,7 @@ builder.Services.AddDbContext<Dierentuin_AppContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddSingleton<Dierentuin_App.Services.DayNightService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
