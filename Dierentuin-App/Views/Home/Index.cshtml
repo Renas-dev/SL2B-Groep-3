@@ -1,7 +1,11 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    // Retrieving the current day/night state from ViewData. The state is stored as a boolean value in the "IsDay" key.
+    bool isDay = (bool)ViewData["IsDay"];
 }
 
+<!-- Displaying a message that indicates whether it is currently day or night based on the isDay variable. -->
+<p>It's currently @((isDay) ? "day" : "night").</p>
 <div class="text-center">
     <h1 class="display-4">Welkom bij de Zoo applicatie! me-ow!! this is the final runner test v.3! </h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
