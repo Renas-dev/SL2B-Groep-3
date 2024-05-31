@@ -27,4 +27,4 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 // Make the application listen on port 80
-app.Run("http://localhost:8080");
+app.Run("http://*:8080");
