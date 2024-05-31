@@ -1,5 +1,11 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@{
+    ViewData["Title"] = "Home Page";
+    // Retrieving the current day/night state from ViewData. The state is stored as a boolean value in the "IsDay" key.
+    bool isDay = (bool)ViewData["IsDay"];
+}
+
+<!DOCTYPE html>
+<html lang="en" data-theme="@((isDay) ? "day" : "night")">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

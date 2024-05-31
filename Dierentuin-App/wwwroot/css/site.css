@@ -1,3 +1,25 @@
+:root {
+  --color-bg: #fff;
+  --color-text: #000;
+}
+
+[data-theme="night"] {
+  --color-bg: #2a2a35;
+  --color-text: #fff;
+}
+
+[data-theme="day"] {
+  --color-bg: #87cefa;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+
+
 html {
   font-size: 14px;
 }
@@ -8,7 +30,11 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
@@ -18,5 +44,16 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin-bottom: 0; /* Reset the margin-bottom */
+}
+
+body > div {
+  flex-grow: 1;
+}
+
+footer {
+  margin-top: auto;
 }
