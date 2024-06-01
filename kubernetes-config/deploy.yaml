@@ -30,29 +30,9 @@ spec:
             memory: "128Mi"
             cpu: "500m"
         env:
-        - name: ConnectionStrings__Dierentuin_AppContext
-          value: "Data Source=/app/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db"
         - name: ASPNETCORE_ENVIRONMENT
           value: "Development"
-        volumeMounts:
-        - mountPath: /data
-          name: sqlite-storage
-      volumes:
-      - name: sqlite-storage
-        persistentVolumeClaim:
-          claimName: sqlite-pvc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: sqlite-pvc
-  namespace: group03
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
+
 ---
 apiVersion: v1
 kind: Service
@@ -66,6 +46,7 @@ spec:
       targetPort: 8080
   selector:
     app: group03
+
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
