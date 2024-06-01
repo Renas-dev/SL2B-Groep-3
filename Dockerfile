@@ -12,7 +12,7 @@ WORKDIR "/src/Dierentuin-App"
 RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Copy the appsettings.json file
-COPY appsettings.json .
+COPY Dierentuin-App/appsettings.json .
 
 # Copy the SQLite database file
 COPY Dierentuin-App/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db /app/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db
