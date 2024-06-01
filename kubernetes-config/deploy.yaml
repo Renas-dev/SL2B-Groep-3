@@ -32,6 +32,8 @@ spec:
         env:
         - name: ConnectionStrings__Dierentuin_AppContext
           value: "Data Source=/data/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
         volumeMounts:
         - mountPath: /data
           name: sqlite-storage
