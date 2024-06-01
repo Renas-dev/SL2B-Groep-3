@@ -1,5 +1,5 @@
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: group03
   namespace: group03
@@ -29,6 +29,28 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
+        env:
+        - name: ConnectionStrings__Dierentuin_AppContext
+          value: "Data Source=/data/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db"
+        volumeMounts:
+        - name: sqlite-storage
+          mountPath: /data
+      volumes:
+      - name: sqlite-storage
+        persistentVolumeClaim:
+          claimName: sqlite-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sqlite-pvc
+  namespace: group03
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
@@ -59,3 +81,4 @@ spec:
       port: 80
   tls:
     certResolver: myresolver
+    

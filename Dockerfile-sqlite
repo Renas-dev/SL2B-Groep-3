@@ -1,0 +1,10 @@
+# Dockerfile.sqlite
+FROM alpine:latest
+
+RUN apk --no-cache add sqlite
+
+WORKDIR /data
+
+COPY Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db /data/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db
+
+CMD ["sqlite3", "Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db"]
