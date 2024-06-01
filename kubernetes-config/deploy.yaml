@@ -35,7 +35,7 @@ spec:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Development"
         volumeMounts:
-        - mountPath: /app
+        - mountPath: /app/sqlite
           name: sqlite-storage
       volumes:
       - name: sqlite-storage
