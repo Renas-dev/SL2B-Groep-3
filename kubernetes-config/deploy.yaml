@@ -35,7 +35,7 @@ spec:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Development"
         volumeMounts:
-        - mountPath: /data
+        - mountPath: /app/sqlite
           name: sqlite-storage
       volumes:
       - name: sqlite-storage
@@ -53,6 +53,19 @@ spec:
   resources:
     requests:
       storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sqlite-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/app/sqlite"
+    type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
@@ -83,4 +96,3 @@ spec:
       port: 80
   tls:
     certResolver: myresolver
-    
