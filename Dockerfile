@@ -15,10 +15,10 @@ RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
 COPY Dierentuin-App/appsettings.json .
 
 # Copy the SQLite database file
-COPY Dierentuin-App/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db /app/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db
+COPY Dierentuin-App/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db /data/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db
 
 # Set environment variable for the connection string
-ENV ConnectionStrings__Dierentuin_AppContext="Data Source=/app/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db"
+ENV ConnectionStrings__Dierentuin_AppContext="Data Source=/data/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db"
 
 # Switch back to /src
 WORKDIR /src
