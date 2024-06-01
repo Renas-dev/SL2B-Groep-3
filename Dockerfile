@@ -12,10 +12,10 @@ WORKDIR "/src/Dierentuin-App"
 RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Copy the SQLite database file
-COPY Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db /app/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db
+COPY Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db /Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db
 
 # Set environment variable for the connection string
-ENV ConnectionStrings__Dierentuin_AppContext="Data Source=/app/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db"
+ENV ConnectionStrings__Dierentuin_AppContext="Data Source=/Dierentuin_AppContext-8936df66-a63e-4347-9020-18b0e3d246f1.db"
 
 # Switch back to /src
 WORKDIR /src
