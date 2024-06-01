@@ -8,4 +8,5 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/app/sqlite" # Ensure this path exists on your node(s)
+    path: "/mnt/app/sqlite"
+    type: DirectoryOrCreate
