@@ -25,4 +25,4 @@ jobs:
         run: dotnet restore ./Dierentuin-App/Dierentuin-App.sln
 
       - name: Run tests
-        run: dotnet test ./Dierentuin-App/Dierentuin-App.sln --filter "FullyQualifiedName~Dierentuin_unit_test.UnitTest2.ToggleDayNight_ShouldToggleIsDay"
+        run: dotnet test ./Dierentuin-App/Dierentuin-App.sln 
