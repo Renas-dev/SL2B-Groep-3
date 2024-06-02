@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Dierentuin_App.Models;
 
 namespace Dierentuin_App.Data
 {
@@ -14,5 +15,6 @@ namespace Dierentuin_App.Data
         }
 
         public DbSet<Animal> Animal { get; set; } = default!;
+        public DbSet<Dierentuin_App.Models.UpdatedAnimal> UpdatedAnimal { get; set; } = default!;
     }
 }
