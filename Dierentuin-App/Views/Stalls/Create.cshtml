@@ -1,0 +1,28 @@
+﻿@model Stall
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Stall</h1>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Biome" class="control-label"></label>
+        <input asp-for="Biome" class="form-control" />
+        <span asp-validation-for="Biome" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Climate" class="control-label"></label>
+        <input asp-for="Climate" class="form-control" />
+        <span asp-validation-for="Climate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
