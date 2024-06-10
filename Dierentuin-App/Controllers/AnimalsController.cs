@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dierentuin_App.Data;
+using Dierentuin_App.Models;
 
 namespace Dierentuin_App.Controllers
 {
@@ -53,7 +54,7 @@ namespace Dierentuin_App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AnimalRace,AnimalName,IsAwake,IsHungry,Environment")] Animal animal)
+        public async Task<IActionResult> Create([Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement")] Animal animal)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +86,7 @@ namespace Dierentuin_App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,AnimalRace,AnimalName,IsAwake,IsHungry,Environment")] Animal animal)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement")] Animal animal)
         {
             if (id != animal.Id)
             {
