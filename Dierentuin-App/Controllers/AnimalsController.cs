@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dierentuin_App.Data;
 using Dierentuin_App.Models;
+using System.Drawing;
 
 namespace Dierentuin_App.Controllers
 {
@@ -20,24 +21,36 @@ namespace Dierentuin_App.Controllers
         }
 
         // GET: Animals
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, Animal.AnimalSize? size, Animal.AnimalDietaryClass? dietaryClass, Animal.AnimalActivityPattern? activityPattern, Animal.AnimalSecurityRequirement? securityRequirement)
         {
+            ViewBag.Size = size;
+            ViewBag.DietaryClass = dietaryClass;
+            ViewBag.ActivityPattern = activityPattern;
+            ViewBag.SecurityRequirement = securityRequirement;
+            ViewBag.SearchString = searchString;
+
             var animals = from a in _context.Animal
                           select a;
 
+            // Search string values
             if (!String.IsNullOrEmpty(searchString))
             {
                 animals = animals.Where(a =>
-            a.Name.Contains(searchString) ||
-            a.Species.Contains(searchString) ||
-            a.Category.Contains(searchString) ||
- /*          
-  *         a.Size.Contains(searchString) ||
-  *         a.DietaryClass.Contains(searchString) ||
-  *         a.ActivityPattern.Contains(searchString) ||
- Encountering a bug here, as the enums are not strings. gonna wait for help from the team.
- */
-            a.Prey.Contains(searchString));
+                    a.Name.Contains(searchString) ||
+                    a.Species.Contains(searchString) ||
+                    a.Category.Contains(searchString) ||
+                    a.Prey.Contains(searchString));
+            }
+
+            // Search enum dropdown values
+            if (size.HasValue || dietaryClass.HasValue || activityPattern.HasValue || securityRequirement.HasValue)
+            {
+                animals = animals.Where(a =>
+                    (!size.HasValue || a.Size == size) &&
+                    (!dietaryClass.HasValue || a.DietaryClass == dietaryClass) &&
+                    (!activityPattern.HasValue || a.ActivityPattern == activityPattern) &&
+                    (!securityRequirement.HasValue || a.SecurityRequirement == securityRequirement)
+                );
             }
 
             return View(await animals.ToListAsync());
