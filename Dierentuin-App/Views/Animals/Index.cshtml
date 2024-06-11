@@ -10,12 +10,53 @@
     <a asp-action="Create">Create New</a>
 </p>
 
+
+<!-- Filters -->
 <form asp-action="Index" method="get">
-    <p>
-        Search by name: <input type="text" name="searchString" />
-        <input type="submit" value="Search" />
-    </p>
+    <!-- Size -->
+    <label for="sizeDropdown">Size:</label>
+    <select id="sizeDropdown" name="size">
+        <option value="">All</option>
+        @foreach (var size in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalSize)))
+        {
+            <option value="@size">@size</option>
+        }
+    </select>
+    <!-- Dietary Class -->
+    <label for="dietaryClassDropdown">Dietary Class:</label>
+    <select id="dietaryClassDropdown" name="dietaryClass">
+        <option value="">All</option>
+        @foreach (var dietaryClass in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalDietaryClass)))
+        {
+            <option value="@dietaryClass">@dietaryClass</option>
+        }
+    </select>
+    <!-- Activity Pattern -->
+    <label for="activityPatternDropdown">Activity Pattern:</label>
+    <select id="activityPatternDropdown" name="activityPattern">
+        <option value="">All</option>
+        @foreach (var activityPattern in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalActivityPattern)))
+        {
+            <option value="@activityPattern">@activityPattern</option>
+        }
+    </select>
+    <!-- Security Requirement -->
+    <label for="securityRequirementDropdown">Security Requirement:</label>
+    <select id="securityRequirementDropdown" name="securityRequirement">
+        <option value="">All</option>
+        @foreach (var securityRequirement in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalSecurityRequirement)))
+        {
+            <option value="@securityRequirement">@securityRequirement</option>
+        }
+    </select>
+    <!-- Search name -->
+    <input type="text" name="searchString" placeholder="Search by name" />
+    <!-- Search button -->
+    <input type="submit" value="Search" />
+    <!-- Reset button -->
+    <button type="button" onclick="window.location.href='@Url.Action("Index", "Animals")'">Reset</button>
 </form>
+
 
 
 <table class="table">
