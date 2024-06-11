@@ -20,9 +20,27 @@ namespace Dierentuin_App.Controllers
         }
 
         // GET: Animals
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Animal.ToListAsync());
+            var animals = from a in _context.Animal
+                          select a;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                animals = animals.Where(a =>
+            a.Name.Contains(searchString) ||
+            a.Species.Contains(searchString) ||
+            a.Category.Contains(searchString) ||
+ /*          
+  *         a.Size.Contains(searchString) ||
+  *         a.DietaryClass.Contains(searchString) ||
+  *         a.ActivityPattern.Contains(searchString) ||
+ Encountering a bug here, as the enums are not strings. gonna wait for help from the team.
+ */
+            a.Prey.Contains(searchString));
+            }
+
+            return View(await animals.ToListAsync());
         }
 
         // GET: Animals/Details/5
@@ -50,8 +68,6 @@ namespace Dierentuin_App.Controllers
         }
 
         // POST: Animals/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement")] Animal animal)
@@ -82,8 +98,6 @@ namespace Dierentuin_App.Controllers
         }
 
         // POST: Animals/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement")] Animal animal)
