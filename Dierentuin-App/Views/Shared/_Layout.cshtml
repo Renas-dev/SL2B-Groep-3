@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Dierentuin_App</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Dierentuin_App.styles.css" asp-append-version="true" />
 </head>
@@ -28,13 +29,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="UpdatedAnimals" asp-action="Create">Create Animal</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Animals" asp-action="Create">Create Animal</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Stalls" asp-action="Index">Create Stall</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="UpdatedAnimals" asp-action="Index">Animals index</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Animals" asp-action="Index">Animals index</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ToggleDayNight">Toggle Day/Night</a>
