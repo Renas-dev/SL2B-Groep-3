@@ -16,12 +16,16 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   transition: background-color 0.5s ease, color 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
 }
-
-
 
 html {
   font-size: 14px;
+  height: 100%;
+  overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 @media (min-width: 768px) {
@@ -38,22 +42,82 @@ html {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  margin-bottom: 0; /* Reset the margin-bottom */
-}
-
 body > div {
-  flex-grow: 1;
+  flex: 1; /* Ensure main content grows to fill the remaining space */
 }
 
-footer {
-  margin-top: auto;
+.footer-custom {
+  background-color: #222;
+  color: #fff;
+  padding: 10px 0;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-custom .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-custom .footer-section-left,
+.footer-custom .footer-section-center,
+.footer-custom .footer-section-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-custom .footer-section-left {
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.footer-custom .footer-section-center {
+  text-align: center;
+}
+
+.footer-custom .footer-section-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.footer-custom .grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  grid-gap: 10px 30px;
+  text-align: left;
+}
+
+.footer-custom .grid-item {
+  display: flex;
+  align-items: center;
+}
+
+.footer-custom .grid-item img.github-icon {
+  width: 20px;
+  height: auto;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.footer-custom .grid-item span {
+  min-width: 60px;
+  color: #ff9800;
+  text-align: right;
+  margin-right: 5px;
+}
+
+.footer-custom .grid-item a {
+  color: #ff9800;
+  text-decoration: none;
+}
+
+.footer-custom .grid-item a:hover {
+  text-decoration: underline;
 }
