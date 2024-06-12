@@ -4,92 +4,129 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Animal Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Species)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Size)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DietaryClass)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ActivityPattern)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Prey)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Enclosure)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SpaceRequirement)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SecurityRequirement)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Stall)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Species)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Size)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DietaryClass)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ActivityPattern)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Prey)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Enclosure)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SpaceRequirement)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SecurityRequirement)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stall.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+
+<div class="row mt-3">
+    <div class="col-12">
+        <!-- Filters -->
+        <form asp-action="Index" method="get" class="row g-3 align-items-center">
+            <div class="col-md-3 order-md-last">
+                <!-- Size -->
+                <label for="sizeDropdown" class="form-label">Size:</label>
+                <select id="sizeDropdown" name="size" class="form-select">
+                    <option value="">All</option>
+                    @foreach (var size in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalSize)))
+                    {
+                        <option value="@size">@size</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 order-md-last">
+                <!-- Dietary Class -->
+                <label for="dietaryClassDropdown" class="form-label">Dietary Class:</label>
+                <select id="dietaryClassDropdown" name="dietaryClass" class="form-select">
+                    <option value="">All</option>
+                    @foreach (var dietaryClass in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalDietaryClass)))
+                    {
+                        <option value="@dietaryClass">@dietaryClass</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 order-md-last">
+                <!-- Activity Pattern -->
+                <label for="activityPatternDropdown" class="form-label">Activity Pattern:</label>
+                <select id="activityPatternDropdown" name="activityPattern" class="form-select">
+                    <option value="">All</option>
+                    @foreach (var activityPattern in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalActivityPattern)))
+                    {
+                        <option value="@activityPattern">@activityPattern</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 order-md-last">
+                <!-- Security Requirement -->
+                <label for="securityRequirementDropdown" class="form-label">Security Requirement:</label>
+                <select id="securityRequirementDropdown" name="securityRequirement" class="form-select">
+                    <option value="">All</option>
+                    @foreach (var securityRequirement in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalSecurityRequirement)))
+                    {
+                        <option value="@securityRequirement">@securityRequirement</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6 mt-3 order-md-first">
+                <!-- Search name -->
+                <input type="text" name="searchString" placeholder="Search by name..." class="form-control" />
+            </div>
+            <div class="col-md-3 mt-3 order-md-first">
+                <!-- Search button -->
+                <input type="submit" value="Search" class="btn btn-dark w-100" />
+            </div>
+            <div class="col-md-3 mt-3 order-md-first">
+                <!-- Reset button -->
+                <button type="button" onclick="window.location.href='@Url.Action("Index", "Animals")'" class="btn btn-secondary w-100">Reset</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    
+
+
+
+
+<div class="row mt-4">
+    <div class="col-8 col-md-12 mb-3">
+        <div class="table-responsive rounded-3">
+            <table class="table table-striped table-hover table-bordered">
+                <thead>
+                    <tr class="table-dark">
+                        <th>@Html.DisplayNameFor(model => model.Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.Species)</th>
+                        <th>@Html.DisplayNameFor(model => model.Category)</th>
+                        <th>@Html.DisplayNameFor(model => model.Size)</th>
+                        <th>@Html.DisplayNameFor(model => model.DietaryClass)</th>
+                        <th>@Html.DisplayNameFor(model => model.ActivityPattern)</th>
+                        <th>@Html.DisplayNameFor(model => model.Prey)</th>
+                        <th>@Html.DisplayNameFor(model => model.Enclosure)</th>
+                        <th>@Html.DisplayNameFor(model => model.SpaceRequirement)</th>
+                        <th>@Html.DisplayNameFor(model => model.SecurityRequirement)</th>
+                        <th>@Html.DisplayNameFor(model => model.Stall)</th>
+                        <th class="d-flex justify-content-center">Change Animal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Species)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Size)</td>
+                            <td>@Html.DisplayFor(modelItem => item.DietaryClass)</td>
+                            <td>@Html.DisplayFor(modelItem => item.ActivityPattern)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Prey)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Enclosure)</td>
+                            <td>@item.SpaceRequirement.ToString("N2") m<sup>2</sup></td>
+                            <td>@Html.DisplayFor(modelItem => item.SecurityRequirement)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Stall.Id)</td>
+                            <td class="d-flex justify-content-center gap-1">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                                <!-- <a asp-action="Details" asp-route-id="@item.Id">Details</a> | -->
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</div>
