@@ -1,45 +1,89 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Dierentuin_App.Data;
 using Dierentuin_App.Models;
 
 namespace Dierentuin_App.Controllers
 {
     public class StallsController : Controller
     {
-        public static List<Stall> _stalls = new List<Stall>();
+        private readonly Dierentuin_AppContext _context;
+        private readonly ILogger<StallsController> _logger;
 
-        // GET: Stalls/Index
-        [HttpGet]
-        public IActionResult Index()
+        public StallsController(Dierentuin_AppContext context, ILogger<StallsController> logger)
         {
-            return View(_stalls);
+            _context = context;
+            _logger = logger;
+        }
+
+        // GET: Stalls
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Stall.ToListAsync());
+        }
+
+        // GET: Stalls/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var stall = await _context.Stall
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (stall == null)
+            {
+                return NotFound();
+            }
+
+            return View(stall);
         }
 
         // GET: Stalls/Create
-        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Stalls/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Stall stall)
+        public async Task<IActionResult> Create([Bind("Id,Name,Climate,HabitatType,SecurityLevel,Size")] Stall stall)
         {
             if (ModelState.IsValid)
             {
-                _stalls.Add(stall);
+                _context.Add(stall);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View();
+
+            // Log the model state errors
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in errors)
+            {
+                _logger.LogError(error.ErrorMessage);
+            }
+
+            return View(stall);
         }
 
-        // GET: Stalls/Edit/id
-        [HttpGet]
-        public IActionResult Edit(int id)
+        // GET: Stalls/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            var stall = _stalls.FirstOrDefault(s => s.Id == id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var stall = await _context.Stall.FindAsync(id);
             if (stall == null)
             {
                 return NotFound();
@@ -47,46 +91,77 @@ namespace Dierentuin_App.Controllers
             return View(stall);
         }
 
-        // POST: Stalls/Edit/id
+        // POST: Stalls/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Stall updatedStall)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Climate,HabitatType,SecurityLevel,Size")] Stall stall)
         {
-            if (id != updatedStall.Id)
+            if (id != stall.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                var existingStall = _stalls.FirstOrDefault(s => s.Id == id);
-                if (existingStall == null)
+                try
                 {
-                    return NotFound();
+                    _context.Update(stall);
+                    await _context.SaveChangesAsync();
                 }
-
-                existingStall.Name = updatedStall.Name;
-                existingStall.Biome = updatedStall.Biome;
-                existingStall.Climate = updatedStall.Climate;
-
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StallExists(stall.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(updatedStall);
+            return View(stall);
         }
 
-        // POST: Stalls/Delete/id
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int stallId)
+        // GET: Stalls/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
-            var stall = _stalls.FirstOrDefault(s => s.Id == stallId);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var stall = await _context.Stall
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (stall == null)
+            {
+                return NotFound();
+            }
+
+            return View(stall);
+        }
+
+        // POST: Stalls/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var stall = await _context.Stall.FindAsync(id);
             if (stall != null)
             {
-                _stalls.Remove(stall);
-                return RedirectToAction(nameof(Index));
+                _context.Stall.Remove(stall);
             }
-            return NotFound();
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool StallExists(int id)
+        {
+            return _context.Stall.Any(e => e.Id == id);
         }
     }
 }

@@ -2,6 +2,7 @@
 using Dierentuin_App.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dierentuin_App.Migrations
 {
     [DbContext(typeof(Dierentuin_AppContext))]
-    partial class Dierentuin_AppContextModelSnapshot : ModelSnapshot
+    [Migration("20240612140230_stalls-animals-connection-1")]
+    partial class stallsanimalsconnection1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");

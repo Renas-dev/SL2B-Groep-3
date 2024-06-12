@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dierentuin_App.Models
 {
@@ -17,6 +18,10 @@ namespace Dierentuin_App.Models
         public string? Enclosure { get; set; }
         public double SpaceRequirement { get; set; }
         public AnimalSecurityRequirement SecurityRequirement { get; set; }
+
+        // Foreign Key to Stall
+        public int StallId { get; set; }
+        public virtual Stall Stall { get; set; }
 
         public enum AnimalSize
         {

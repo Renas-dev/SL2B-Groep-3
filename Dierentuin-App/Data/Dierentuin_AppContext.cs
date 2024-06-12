@@ -15,7 +15,8 @@ namespace Dierentuin_App.Data
         }
 
         public DbSet<Animal> Animal { get; set; } = default!;
-        public DbSet<Dierentuin_App.Models.UpdatedAnimal> UpdatedAnimal { get; set; } = default!;
-        public DbSet<Dierentuin_App.Models.UpdatedStall> UpdatedStall { get; set; } = default!;
+        public DbSet<Stall> Stall { get; set; }
+        // public DbSet<Dierentuin_App.Models.UpdatedAnimal> UpdatedAnimal { get; set; } = default!;
+        // public DbSet<Dierentuin_App.Models.UpdatedStall> UpdatedStall { get; set; } = default!;
     }
 }
