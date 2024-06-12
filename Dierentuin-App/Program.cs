@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Dierentuin_App.Data;
+using Dierentuin_App.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<Dierentuin_AppContext>(options =>
@@ -10,12 +11,25 @@ builder.Services.AddDbContext<Dierentuin_AppContext>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<Dierentuin_App.Services.DayNightService>();
 
-//Removes the required attribute for non-nullable reference types.
+// Removes the required attribute for non-nullable reference types.
 builder.Services.AddControllers(
     options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 
 var app = builder.Build();
 
+// Seed the database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<Dierentuin_AppContext>();
+
+    // Ensure database is created
+    context.Database.Migrate();
+
+    // Seed the database
+    var seeder = new DataSeeder(context);
+    seeder.Seed();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
