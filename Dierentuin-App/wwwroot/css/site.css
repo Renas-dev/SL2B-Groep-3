@@ -57,3 +57,16 @@ body > div {
 footer {
   margin-top: auto;
 }
+
+/* Styling for Stalls */
+.grid-container {
+    display: flex;
+    flex-wrap: wrap; 
+}
+
+.grid-item {
+    width: 25px;
+    height: 25px;
+    background-color: yellow;
+    border: 1px solid black;
+}
