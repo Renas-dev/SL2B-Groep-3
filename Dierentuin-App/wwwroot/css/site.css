@@ -47,90 +47,99 @@ body > div {
 }
 
 .footer-custom {
-  background-color: #222;
-  color: #fff;
-  padding: 10px 0;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.footer-custom .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.footer-custom .footer-section-left,
-.footer-custom .footer-section-center,
-.footer-custom .footer-section-right {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.footer-custom .footer-section-left {
-  text-align: left;
-  justify-content: flex-start;
-}
-
-.footer-custom .footer-section-center {
-  text-align: center;
-}
-
-.footer-custom .footer-section-right {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.footer-custom .grid-container {
-  display: grid;
-  grid-template-columns: repeat(2, max-content);
-  grid-gap: 10px 30px;
-  text-align: left;
-}
-
-.footer-custom .grid-item {
-  display: flex;
-  align-items: center;
-}
-
-.footer-custom .grid-item img.github-icon {
-  width: 20px;
-  height: auto;
-  margin-right: 5px;
-  vertical-align: middle;
-}
-
-.footer-custom .grid-item span {
-  min-width: 60px;
-  color: #ff9800;
-  text-align: right;
-  margin-right: 5px;
-}
-
-.footer-custom .grid-item a {
-  color: #ff9800;
-  text-decoration: none;
-}
-
-.footer-custom .grid-item a:hover {
-  text-decoration: underline;
-}
-
-/* Styling for Stalls */
-.grid-container {
+    background-color: #222;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
     display: flex;
-    flex-wrap: wrap; 
+    align-items: center;
+    justify-content: center;
 }
 
-.grid-item {
-    width: 25px;
-    height: 25px;
-    background-color: yellow;
-    border: 1px solid black;
+    .footer-custom .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .footer-custom .footer-section-left,
+    .footer-custom .footer-section-center,
+    .footer-custom .footer-section-right {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .footer-custom .footer-section-left {
+        text-align: left;
+        justify-content: flex-start;
+    }
+
+    .footer-custom .footer-section-center {
+        text-align: center;
+    }
+
+    .footer-custom .footer-section-right {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* Adjusted grid container */
+    .footer-custom .grid-container {
+        display: grid;
+        grid-template-columns: repeat(2, 150px); /* Set fixed width for columns */
+        gap: 10px 30px; /* Adjust gap between items */
+        text-align: left;
+    }
+
+    /* Grid item styling */
+    .footer-custom .grid-item {
+        display: flex;
+        align-items: center;
+        background-color: transparent; /* Remove yellow background */
+        width: 150px; /* Set fixed width for items */
+    }
+
+        /* GitHub icon styling */
+        .footer-custom .grid-item img.github-icon {
+            width: 20px;
+            height: auto;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        /* Styling for text span */
+        .footer-custom .grid-item span {
+            color: #ff9800;
+            margin-right: 5px;
+        }
+
+        /* Styling for links */
+        .footer-custom .grid-item a {
+            color: #ff9800;
+            text-decoration: none;
+        }
+
+            .footer-custom .grid-item a:hover {
+                text-decoration: underline;
+            }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .footer-custom .container {
+        flex-direction: column; /* Stack sections vertically */
+        text-align: center; /* Center text for all sections */
+    }
+
+    .footer-custom .grid-container {
+        grid-template-columns: 1fr; /* Single column layout for smaller screens */
+        justify-items: center; /* Center items horizontally */
+    }
+
+    .footer-custom .grid-item {
+        width: auto; /* Auto width for items on small screens */
+    }
 }
