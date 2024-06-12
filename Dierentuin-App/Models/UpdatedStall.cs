@@ -8,6 +8,5 @@
         public string HabitatType { get; set; }
         public string SecurityLevel { get; set; }
         public double Size { get; set; }
-
-        }
+    }
 }

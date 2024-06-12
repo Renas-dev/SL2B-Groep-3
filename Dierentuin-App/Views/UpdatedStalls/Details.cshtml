@@ -4,78 +4,84 @@
     ViewData["Title"] = "Details";
 }
 
-<!DOCTYPE <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <link rel="stylesheet" href="~/css/" />
-    </head>
-    <body>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" href="~/css/" />
+</head>
+<body>
 
-<h1>Details</h1>
+    <h1>Details</h1>
 
-<div>
-    <h4>UpdatedStall</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Climate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Climate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HabitatType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HabitatType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SecurityLevel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SecurityLevel)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Size)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Size)
-        </dd>
-    </dl>
-</div>
-
-<div class="stalls">
-    @{
-        double size = Model.Size; // Line make the Model.Size a double variable
-        int height = (int)Math.Truncate(size); // Takes the first 2 values and removes the numbers after .
-        double widthDecimal = size - Math.Truncate(size); // Takes the last 2 characters after the .
-        int width = (int)(widthDecimal * 100); // Makes the 2 characters after . an int (full number)
-        width = Math.Max(width, 1); // Set minimum width of 1
-        height = Math.Max(height, 1); // Set minimum height of 1
-    }
-
-    <div class="grid-container">
-        @for (int i = 0; i < height; i++)
-        {
-            <div class="grid-row">
-                @for (int j = 0; j < width; j++)
-                {
-                    <div class="grid-item"></div>
-                }
-            </div>
-        }
+    <div>
+        <h4>UpdatedStall</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Climate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Climate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.HabitatType)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.HabitatType)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SecurityLevel)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SecurityLevel)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Size)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Size)
+            </dd>
+        </dl>
     </div>
-</div>
 
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="stalls">
+        @{
+            double size = Model.Size; // Line make the Model.Size a double variable
+            int width = (int)Math.Truncate(size); // Takes the first 2 values and removes the numbers after .
+            double heightDecimal = Math.Round(size - Math.Truncate(size), 2); // Takes the last 2 characters after the . and rounds them to decimal
+            int height = (int)(heightDecimal * 100); // Makes the 2 characters after . an int (full number)
+            width = Math.Max(width, 1); // Set minimum width of 1
+            height = Math.Max(height, 1); // Set minimum height of 1
+        }
+
+        <p>Height: @height</p>
+        <p>Width: @width</p>
+        <p>Size: @size</p>
+        <p>Height Decimal: @heightDecimal</p>
+
+        <div class="grid-container">
+            @for (int i = 0; i < width; i++)
+            {
+                <div class="grid-row">
+                    @for (int j = 0; j < height; j++)
+                    {
+                        <div class="grid-item"></div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>
 
 </body>
 </html>
