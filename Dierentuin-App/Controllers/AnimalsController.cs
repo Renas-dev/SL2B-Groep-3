@@ -21,7 +21,7 @@ namespace Dierentuin_App.Controllers
 
         // GET: Animals
         public async Task<IActionResult> Index(string searchString, Animal.AnimalSize? size, Animal.AnimalDietaryClass? dietaryClass, Animal.AnimalActivityPattern? activityPattern, Animal.AnimalSecurityRequirement? securityRequirement)
-        {
+        { // Add search parameters
             var animals = from a in _context.Animal
                           select a;
             // Search string values

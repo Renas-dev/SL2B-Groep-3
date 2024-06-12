@@ -45,7 +45,7 @@ html {
 body > div {
   flex: 1; /* Ensure main content grows to fill the remaining space */
 }
-
+/* Custom footer styles */
 .footer-custom {
     background-color: #222;
     color: #fff;
@@ -55,7 +55,7 @@ body > div {
     align-items: center;
     justify-content: center;
 }
-
+    /* Container for footer content */
     .footer-custom .container {
         display: flex;
         justify-content: space-between;
@@ -63,7 +63,7 @@ body > div {
         max-width: 1200px;
         margin: 0 auto;
     }
-
+    /* Footer sections */
     .footer-custom .footer-section-left,
     .footer-custom .footer-section-center,
     .footer-custom .footer-section-right {
@@ -72,16 +72,16 @@ body > div {
         align-items: center;
         justify-content: center;
     }
-
+    /* Adjust alignment for sections */
     .footer-custom .footer-section-left {
         text-align: left;
         justify-content: flex-start;
     }
-
+    /* Adjust alignment for sections */
     .footer-custom .footer-section-center {
         text-align: center;
     }
-
+    /* Adjust alignment for sections */
     .footer-custom .footer-section-right {
         display: flex;
         justify-content: flex-end;
@@ -133,7 +133,7 @@ body > div {
         flex-direction: column; /* Stack sections vertically */
         text-align: center; /* Center text for all sections */
     }
-
+    
     .footer-custom .grid-container {
         grid-template-columns: 1fr; /* Single column layout for smaller screens */
         justify-items: center; /* Center items horizontally */
