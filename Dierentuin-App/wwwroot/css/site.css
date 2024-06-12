@@ -121,3 +121,16 @@ body > div {
 .footer-custom .grid-item a:hover {
   text-decoration: underline;
 }
+
+/* Styling for Stalls */
+.grid-container {
+    display: flex;
+    flex-wrap: wrap; 
+}
+
+.grid-item {
+    width: 25px;
+    height: 25px;
+    background-color: yellow;
+    border: 1px solid black;
+}

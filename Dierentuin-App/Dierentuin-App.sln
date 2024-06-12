@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dierentuin-App", "Dierentuin-App.csproj", "{2EFCB13D-4EFF-44E1-AC27-AA54A002D63B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dierentuin-unit-test", "..\Dierentuin-unit-test\Dierentuin-unit-test.csproj", "{5238E5FC-424A-4C3C-9FC4-C4D5A4BC6660}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dierentuin-unit-test", "..\Dierentuin-unit-test\Dierentuin-unit-test.csproj", "{5238E5FC-424A-4C3C-9FC4-C4D5A4BC6660}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

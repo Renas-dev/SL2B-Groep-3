@@ -2,6 +2,7 @@
 using Dierentuin_App.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,48 +10,38 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dierentuin_App.Migrations
 {
     [DbContext(typeof(Dierentuin_AppContext))]
-    partial class Dierentuin_AppContextModelSnapshot : ModelSnapshot
+    [Migration("20240611114514_CreateUpdatedStallTable")]
+    partial class CreateUpdatedStallTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
 
-            modelBuilder.Entity("Dierentuin_App.Models.Animal", b =>
+            modelBuilder.Entity("Animal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ActivityPattern")
+                    b.Property<string>("AnimalName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AnimalRace")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Environment")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsAwake")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Category")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("DietaryClass")
+                    b.Property<bool>("IsHungry")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Enclosure")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Prey")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SecurityRequirement")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Size")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("SpaceRequirement")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("Species")
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
