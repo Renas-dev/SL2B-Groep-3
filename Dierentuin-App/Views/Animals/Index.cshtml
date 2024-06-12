@@ -4,19 +4,104 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Animal Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
-
+<!-- Title & Create new animal button -->
 <div class="row mt-3">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h1>Animals</h1>
+        <a asp-action="Create" class="btn btn-success">Create New Animal</a>
+    </div>
+</div>
+
+<!-- Filter button for small-medium screen -->
+<div class="mt-5">
+	<button type="button" class="btn btn-dark d-md-none" data-bs-toggle="modal" data-bs-target="#filterModal">
+		Filters
+	</button>
+</div>
+
+<!-- Modal for small-medium screen -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filters</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Index" method="get" class="row g-3 align-items-center">
+					<div class="col-12">
+                        <!-- Search name with icon -->
+                        <div class="col-12">
+                            <div class="input-group">
+                                <input type="text" name="searchString" placeholder="Search by name..." class="form-control" />
+                                <span class="input-group-text">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Size -->
+                        <label for="sizeDropdown" class="form-label mt-3">Size:</label>
+                        <select id="sizeDropdown" name="size" class="form-select">
+                            <option value="">All</option>
+                            @foreach (var size in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalSize)))
+                            {
+                                <option value="@size">@size</option>
+                            }
+                        </select>
+                    </div>
+                    <!-- Dietary Class -->
+                    <div class="col-12">
+                        <label for="dietaryClassDropdown" class="form-label">Dietary Class:</label>
+                        <select id="dietaryClassDropdown" name="dietaryClass" class="form-select">
+                            <option value="">All</option>
+                            @foreach (var dietaryClass in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalDietaryClass)))
+                            {
+                                <option value="@dietaryClass">@dietaryClass</option>
+                            }
+                        </select>
+                    </div>
+                    <!-- Activity Pattern -->
+                    <div class="col-12">
+                        <label for="activityPatternDropdown" class="form-label">Activity Pattern:</label>
+                        <select id="activityPatternDropdown" name="activityPattern" class="form-select">
+                            <option value="">All</option>
+                            @foreach (var activityPattern in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalActivityPattern)))
+                            {
+                                <option value="@activityPattern">@activityPattern</option>
+                            }
+                        </select>
+					</div>
+                    <!-- Security Requirement -->
+                    <div class="col-12">
+                        <label for="securityRequirementDropdown" class="form-label">Security Requirement:</label>
+                        <select id="securityRequirementDropdown" name="securityRequirement" class="form-select">
+                            <option value="">All</option>
+                            @foreach (var securityRequirement in Enum.GetValues(typeof(Dierentuin_App.Models.Animal.AnimalSecurityRequirement)))
+                            {
+                                <option value="@securityRequirement">@securityRequirement</option>
+                            }
+                        </select>
+					</div>
+                    <!-- Reset button -->
+                    <div class="col-6 mt-3">
+                        <button type="button" onclick="window.location.href='@Url.Action("Index", "Animals")'" class="btn btn-secondary w-100">Reset</button>
+					</div>
+                    <!-- Search button -->
+                    <div class="col-6 mt-3">
+                        <input type="submit" value="Search" class="btn btn-dark w-100" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters for larger screens -->
+<div class="row mt-3 d-none d-md-flex">
     <div class="col-12">
-        <!-- Filters -->
         <form asp-action="Index" method="get" class="row g-3 align-items-center">
+            <!-- Size -->
             <div class="col-md-3 order-md-last">
-                <!-- Size -->
                 <label for="sizeDropdown" class="form-label">Size:</label>
                 <select id="sizeDropdown" name="size" class="form-select">
                     <option value="">All</option>
@@ -26,8 +111,8 @@
                     }
                 </select>
             </div>
+            <!-- Dietary Class -->
             <div class="col-md-3 order-md-last">
-                <!-- Dietary Class -->
                 <label for="dietaryClassDropdown" class="form-label">Dietary Class:</label>
                 <select id="dietaryClassDropdown" name="dietaryClass" class="form-select">
                     <option value="">All</option>
@@ -36,9 +121,9 @@
                         <option value="@dietaryClass">@dietaryClass</option>
                     }
                 </select>
-            </div>
+			</div>
+            <!-- Activity Pattern -->
             <div class="col-md-3 order-md-last">
-                <!-- Activity Pattern -->
                 <label for="activityPatternDropdown" class="form-label">Activity Pattern:</label>
                 <select id="activityPatternDropdown" name="activityPattern" class="form-select">
                     <option value="">All</option>
@@ -48,8 +133,8 @@
                     }
                 </select>
             </div>
+            <!-- Security Requirement -->
             <div class="col-md-3 order-md-last">
-                <!-- Security Requirement -->
                 <label for="securityRequirementDropdown" class="form-label">Security Requirement:</label>
                 <select id="securityRequirementDropdown" name="securityRequirement" class="form-select">
                     <option value="">All</option>
@@ -59,31 +144,28 @@
                     }
                 </select>
             </div>
+            <!-- Search name -->
             <div class="col-md-6 mt-3 order-md-first">
-                <!-- Search name -->
                 <input type="text" name="searchString" placeholder="Search by name..." class="form-control" />
             </div>
+            <!-- Search button -->
             <div class="col-md-3 mt-3 order-md-first">
-                <!-- Search button -->
                 <input type="submit" value="Search" class="btn btn-dark w-100" />
             </div>
+            <!-- Reset button -->
             <div class="col-md-3 mt-3 order-md-first">
-                <!-- Reset button -->
                 <button type="button" onclick="window.location.href='@Url.Action("Index", "Animals")'" class="btn btn-secondary w-100">Reset</button>
             </div>
         </form>
     </div>
 </div>
 
-    
-
-
-
-
-<div class="row mt-4">
-    <div class="col-8 col-md-12 mb-3">
+<!-- Table -->
+<div class="row my-4">
+    <div class="col-12 mb-3">
         <div class="table-responsive rounded-3">
             <table class="table table-striped table-hover table-bordered">
+                <!-- Head -->
                 <thead>
                     <tr class="table-dark">
                         <th>@Html.DisplayNameFor(model => model.Name)</th>
@@ -100,11 +182,12 @@
                         <th class="d-flex justify-content-center">Change Animal</th>
                     </tr>
                 </thead>
+                <!-- Body -->
                 <tbody>
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                            <td><a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">@Html.DisplayFor(modelItem => item.Name)</a></td>
                             <td>@Html.DisplayFor(modelItem => item.Species)</td>
                             <td>@Html.DisplayFor(modelItem => item.Category)</td>
                             <td>@Html.DisplayFor(modelItem => item.Size)</td>
@@ -114,19 +197,15 @@
                             <td>@Html.DisplayFor(modelItem => item.Enclosure)</td>
                             <td>@item.SpaceRequirement.ToString("N2") m<sup>2</sup></td>
                             <td>@Html.DisplayFor(modelItem => item.SecurityRequirement)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Stall.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StallId)</td>
                             <td class="d-flex justify-content-center gap-1">
                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
                                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                                <!-- <a asp-action="Details" asp-route-id="@item.Id">Details</a> | -->
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-        </div>
-        <div>
-            
         </div>
     </div>
 </div>

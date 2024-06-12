@@ -4,81 +4,84 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="row d-flex justify-content-center my-3">
+    <div class="col-11 col-md-6 border rounded-3 border-dark p-4 mb-3">
+        <!-- Title -->
+        <h1>Details of @Html.DisplayFor(model => model.Name)</h1>
+        <!-- Info Lists -->
+        <dl class="row mt-3">
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.Name):
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.Species):
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.Species)
+            </dd>
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.Category): 
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.Category)
+            </dd>
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.Size):
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.Size)
+            </dd>
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.DietaryClass):
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.DietaryClass)
+            </dd>
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.ActivityPattern):
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.ActivityPattern)
+            </dd>
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.Prey):
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.Prey)
+            </dd>
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.Enclosure):
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.Enclosure)
+            </dd>
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.SpaceRequirement):
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.SpaceRequirement)
+            </dd>
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.SecurityRequirement):
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.SecurityRequirement)
+            </dd>
+            <dt class = "col-sm-6">
+                @Html.DisplayNameFor(model => model.Stall):
+            </dt>
+            <dd class = "col-sm-6">
+                @Html.DisplayFor(model => model.Stall.Id)
+            </dd>
+        </dl>
+        <!-- Edit & Go Back -->
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a> |
+            <a asp-action="Index" class="text-dark">Back to List</a>
+        </div>
+    </div>
+</div>
 
-<div>
-    <h4>Animal</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Species)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Species)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Size)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Size)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DietaryClass)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DietaryClass)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ActivityPattern)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ActivityPattern)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Prey)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Prey)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Enclosure)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Enclosure)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SpaceRequirement)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SpaceRequirement)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SecurityRequirement)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SecurityRequirement)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Stall)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Stall.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
