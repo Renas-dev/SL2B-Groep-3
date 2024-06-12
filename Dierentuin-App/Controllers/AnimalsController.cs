@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dierentuin_App.Data;
+using Dierentuin_App.Models;
+using System.Drawing;
 
 namespace Dierentuin_App.Controllers
 {
@@ -19,9 +21,39 @@ namespace Dierentuin_App.Controllers
         }
 
         // GET: Animals
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, Animal.AnimalSize? size, Animal.AnimalDietaryClass? dietaryClass, Animal.AnimalActivityPattern? activityPattern, Animal.AnimalSecurityRequirement? securityRequirement)
         {
-            return View(await _context.Animal.ToListAsync());
+            ViewBag.Size = size;
+            ViewBag.DietaryClass = dietaryClass;
+            ViewBag.ActivityPattern = activityPattern;
+            ViewBag.SecurityRequirement = securityRequirement;
+            ViewBag.SearchString = searchString;
+
+            var animals = from a in _context.Animal
+                          select a;
+
+            // Search string values
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                animals = animals.Where(a =>
+                    a.Name.Contains(searchString) ||
+                    a.Species.Contains(searchString) ||
+                    a.Category.Contains(searchString) ||
+                    a.Prey.Contains(searchString));
+            }
+
+            // Search enum dropdown values
+            if (size.HasValue || dietaryClass.HasValue || activityPattern.HasValue || securityRequirement.HasValue)
+            {
+                animals = animals.Where(a =>
+                    (!size.HasValue || a.Size == size) &&
+                    (!dietaryClass.HasValue || a.DietaryClass == dietaryClass) &&
+                    (!activityPattern.HasValue || a.ActivityPattern == activityPattern) &&
+                    (!securityRequirement.HasValue || a.SecurityRequirement == securityRequirement)
+                );
+            }
+
+            return View(await animals.ToListAsync());
         }
 
         // GET: Animals/Details/5
@@ -49,11 +81,9 @@ namespace Dierentuin_App.Controllers
         }
 
         // POST: Animals/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AnimalRace,AnimalName,IsAwake,IsHungry,Environment")] Animal animal)
+        public async Task<IActionResult> Create([Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement")] Animal animal)
         {
             if (ModelState.IsValid)
             {
@@ -81,11 +111,9 @@ namespace Dierentuin_App.Controllers
         }
 
         // POST: Animals/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,AnimalRace,AnimalName,IsAwake,IsHungry,Environment")] Animal animal)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement")] Animal animal)
         {
             if (id != animal.Id)
             {

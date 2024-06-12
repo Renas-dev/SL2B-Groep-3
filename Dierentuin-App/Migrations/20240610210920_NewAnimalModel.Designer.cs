@@ -2,6 +2,7 @@
 using Dierentuin_App.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dierentuin_App.Migrations
 {
     [DbContext(typeof(Dierentuin_AppContext))]
-    partial class Dierentuin_AppContextModelSnapshot : ModelSnapshot
+    [Migration("20240610210920_NewAnimalModel")]
+    partial class NewAnimalModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -106,36 +109,6 @@ namespace Dierentuin_App.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UpdatedAnimal");
-                });
-
-            modelBuilder.Entity("Dierentuin_App.Models.UpdatedStall", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Climate")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("HabitatType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SecurityLevel")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Size")
-                        .HasColumnType("REAL");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UpdatedStall");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Dierentuin_App</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Dierentuin_App.styles.css" asp-append-version="true" />
 </head>
@@ -28,13 +29,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="UpdatedAnimals" asp-action="Create">Create Animal</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Animals" asp-action="Create">Create Animal</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Stalls" asp-action="Index">Create Stall</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="UpdatedAnimals" asp-action="Index">Animals index</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Animals" asp-action="Index">Animals index</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ToggleDayNight">Toggle Day/Night</a>
@@ -53,9 +54,34 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer-custom">
         <div class="container">
-            &copy; 2024 - Dierentuin_App - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="footer-section-left">
+                <h2>Zoo Application</h2>
+            </div>
+            <div class="footer-section-center">
+                <h3>Zoo application Designed by team Group 3</h3>
+            </div>
+            <div class="footer-section-right">
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <img src="~/images/github-mark-white.png" alt="GitHub" class="github-icon">
+                        <a href="https://github.com/sammayer0815">Github Sam</a>
+                    </div>
+                    <div class="grid-item">
+                        <img src="~/images/github-mark-white.png" alt="GitHub" class="github-icon">
+                        <a href="https://github.com/Renas-dev">Github Renas</a>
+                    </div>
+                    <div class="grid-item">
+                        <img src="~/images/github-mark-white.png" alt="GitHub" class="github-icon">
+                        <a href="https://github.com/DPCoderr">Github Daniel</a>
+                    </div>
+                    <div class="grid-item">
+                        <img src="~/images/github-mark-white.png" alt="GitHub" class="github-icon">
+                        <a href="https://github.com/Sadek2002">Github Sadek</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
