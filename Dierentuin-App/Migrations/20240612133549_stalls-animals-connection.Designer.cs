@@ -2,6 +2,7 @@
 using Dierentuin_App.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dierentuin_App.Migrations
 {
     [DbContext(typeof(Dierentuin_AppContext))]
-    partial class Dierentuin_AppContextModelSnapshot : ModelSnapshot
+    [Migration("20240612133549_stalls-animals-connection")]
+    partial class stallsanimalsconnection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -95,17 +98,12 @@ namespace Dierentuin_App.Migrations
             modelBuilder.Entity("Dierentuin_App.Models.Animal", b =>
                 {
                     b.HasOne("Dierentuin_App.Models.Stall", "Stall")
-                        .WithMany("Animals")
+                        .WithMany()
                         .HasForeignKey("StallId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Stall");
-                });
-
-            modelBuilder.Entity("Dierentuin_App.Models.Stall", b =>
-                {
-                    b.Navigation("Animals");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dierentuin_App.Data;
 using Dierentuin_App.Models;
-using System.Drawing;
 
 namespace Dierentuin_App.Controllers
 {
@@ -23,15 +22,8 @@ namespace Dierentuin_App.Controllers
         // GET: Animals
         public async Task<IActionResult> Index(string searchString, Animal.AnimalSize? size, Animal.AnimalDietaryClass? dietaryClass, Animal.AnimalActivityPattern? activityPattern, Animal.AnimalSecurityRequirement? securityRequirement)
         {
-            ViewBag.Size = size;
-            ViewBag.DietaryClass = dietaryClass;
-            ViewBag.ActivityPattern = activityPattern;
-            ViewBag.SecurityRequirement = securityRequirement;
-            ViewBag.SearchString = searchString;
-
             var animals = from a in _context.Animal
                           select a;
-
             // Search string values
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -41,7 +33,6 @@ namespace Dierentuin_App.Controllers
                     a.Category.Contains(searchString) ||
                     a.Prey.Contains(searchString));
             }
-
             // Search enum dropdown values
             if (size.HasValue || dietaryClass.HasValue || activityPattern.HasValue || securityRequirement.HasValue)
             {
@@ -52,7 +43,6 @@ namespace Dierentuin_App.Controllers
                     (!securityRequirement.HasValue || a.SecurityRequirement == securityRequirement)
                 );
             }
-
             return View(await animals.ToListAsync());
         }
 
@@ -65,6 +55,7 @@ namespace Dierentuin_App.Controllers
             }
 
             var animal = await _context.Animal
+                .Include(a => a.Stall)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (animal == null)
             {
@@ -77,16 +68,29 @@ namespace Dierentuin_App.Controllers
         // GET: Animals/Create
         public IActionResult Create()
         {
+            ViewData["StallId"] = new SelectList(_context.Set<Stall>(), "Id", "Id");
             return View();
         }
 
         // POST: Animals/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement")] Animal animal)
+        public async Task<IActionResult> Create([Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement,StallId")] Animal animal)
         {
             if (ModelState.IsValid)
             {
+                // Check if the Stall exists
+                var stall = await _context.Stall.FindAsync(animal.StallId);
+                if (stall == null)
+                {
+                    // Stall does not exist, return an error
+                    ModelState.AddModelError("StallId", "Stall does not exist");
+                    return View(animal);
+                }
+
+                // Stall exists, insert the Animal
                 _context.Add(animal);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -107,13 +111,16 @@ namespace Dierentuin_App.Controllers
             {
                 return NotFound();
             }
+            ViewData["StallId"] = new SelectList(_context.Set<Stall>(), "Id", "Id", animal.StallId);
             return View(animal);
         }
 
         // POST: Animals/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement")] Animal animal)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement,StallId")] Animal animal)
         {
             if (id != animal.Id)
             {
@@ -140,6 +147,7 @@ namespace Dierentuin_App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["StallId"] = new SelectList(_context.Set<Stall>(), "Id", "Id", animal.StallId);
             return View(animal);
         }
 
@@ -152,6 +160,7 @@ namespace Dierentuin_App.Controllers
             }
 
             var animal = await _context.Animal
+                .Include(a => a.Stall)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (animal == null)
             {

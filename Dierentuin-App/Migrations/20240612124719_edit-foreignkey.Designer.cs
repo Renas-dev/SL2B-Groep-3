@@ -2,6 +2,7 @@
 using Dierentuin_App.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dierentuin_App.Migrations
 {
     [DbContext(typeof(Dierentuin_AppContext))]
-    partial class Dierentuin_AppContextModelSnapshot : ModelSnapshot
+    [Migration("20240612124719_edit-foreignkey")]
+    partial class editforeignkey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -68,6 +71,80 @@ namespace Dierentuin_App.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Biome")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Climate")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stall");
+                });
+
+            modelBuilder.Entity("Dierentuin_App.Models.UpdatedAnimal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ActivityPattern")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Dietary")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Enclosure")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Prey")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SecurityRequirement")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SpaceRequirement")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Species")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UpdatedAnimal");
+                });
+
+            modelBuilder.Entity("Dierentuin_App.Models.UpdatedStall", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Climate")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -89,23 +166,18 @@ namespace Dierentuin_App.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Stall");
+                    b.ToTable("UpdatedStall");
                 });
 
             modelBuilder.Entity("Dierentuin_App.Models.Animal", b =>
                 {
                     b.HasOne("Dierentuin_App.Models.Stall", "Stall")
-                        .WithMany("Animals")
+                        .WithMany()
                         .HasForeignKey("StallId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Stall");
-                });
-
-            modelBuilder.Entity("Dierentuin_App.Models.Stall", b =>
-                {
-                    b.Navigation("Animals");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,78 +1,59 @@
-﻿<h1>Stalls</h1>
+﻿@model IEnumerable<Dierentuin_App.Models.Stall>
 
-@if (Model != null && Model.Count > 0)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Stall Name</th>
-                <th>Biome</th>
-                <th>Climate</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var stall in Model)
-            {
-                <tr>
-                    <td>@stall.Name</td>
-                    <td>@stall.Biome</td>
-                    <td>@stall.Climate</td>
-                    <td>
-                        <a href="@Url.Action("Edit", "Stalls", new { id = stall.Id })" class="btn btn-primary">Edit</a>
-                        <form asp-controller="Stalls" asp-action="Delete" method="post" style="display: inline;">
-                            <input type="hidden" name="stallId" value="@stall.Id" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="3">
-                        <div style="width: 50px; height: 50px; background-color: black;"></div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No stalls available.</p>
+@{
+    ViewData["Title"] = "Index";
 }
 
-<h2>Create Stall</h2>
-<form asp-controller="Stalls" asp-action="Create" method="post">
-    <div class="form-group">
-        <label for="name">Stall Name:</label>
-        <input type="text" id="name" name="Name" class="form-control" required>
-    </div>
-    <div class="form-group">
-        <label for="biome">Biome:</label>
-        <select id="biome" name="Biome" class="form-control" required>
-            <option value="Desert">Desert</option>
-            <option value="Mountain">Mountain</option>
-            <option value="Jungle">Jungle</option>
-            <option value="Grass">Grass</option>
-            <option value="Swamp">Swamp</option>
-            <option value="Pond">Pond</option>
-            <option value="Sea/Ocean">Sea/Ocean</option>
-            <option value="Beach">Beach</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="climate">Climate:</label>
-        <select id="climate" name="Climate" class="form-control" required>
-            <option value="Tropical">Tropical</option>
-            <option value="Temperate">Temperate</option>
-            <option value="Desert">Desert</option>
-            <option value="Arctic">Arctic</option>
-            <option value="Mediterranean">Mediterranean</option>
-            <option value="Grassland">Grassland</option>
-            <option value="Rainforest">Rainforest</option>
-            <option value="Savanna">Savanna</option>
-            <option value="Taiga">Taiga</option>
-            <option value="Tundra">Tundra</option>
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Climate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HabitatType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SecurityLevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Size)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Climate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HabitatType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SecurityLevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Size)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,47 +1,54 @@
-﻿@model Stall
+﻿@model Dierentuin_App.Models.Stall
 
 @{
-    ViewData["Title"] = "Edit Stall";
+    ViewData["Title"] = "Edit";
 }
 
-<h1>Edit Stall</h1>
+<h1>Edit</h1>
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+<h4>Stall</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Climate" class="control-label"></label>
+                <input asp-for="Climate" class="form-control" />
+                <span asp-validation-for="Climate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HabitatType" class="control-label"></label>
+                <input asp-for="HabitatType" class="form-control" />
+                <span asp-validation-for="HabitatType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SecurityLevel" class="control-label"></label>
+                <input asp-for="SecurityLevel" class="form-control" />
+                <span asp-validation-for="SecurityLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Size" class="control-label"></label>
+                <input asp-for="Size" class="form-control" />
+                <span asp-validation-for="Size" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
-    <div class="form-group">
-        <label for="biome">Biome:</label>
-        <select id="biome" name="Biome" class="form-control" required>
-            <option value="Desert">Desert</option>
-            <option value="Mountain">Mountain</option>
-            <option value="Jungle">Jungle</option>
-            <option value="Grass">Grass</option>
-            <option value="Swamp">Swamp</option>
-            <option value="Pond">Pond</option>
-            <option value="Sea/Ocean">Sea/Ocean</option>
-            <option value="Beach">Beach</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="climate">Climate:</label>
-        <select id="climate" name="Climate" class="form-control" required>
-            <option value="Tropical">Tropical</option>
-            <option value="Temperate">Temperate</option>
-            <option value="Desert">Desert</option>
-            <option value="Arctic">Arctic</option>
-            <option value="Mediterranean">Mediterranean</option>
-            <option value="Grassland">Grassland</option>
-            <option value="Rainforest">Rainforest</option>
-            <option value="Savanna">Savanna</option>
-            <option value="Taiga">Taiga</option>
-            <option value="Tundra">Tundra</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Save Changes" class="btn btn-primary" />
-    </div>
-</form>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
