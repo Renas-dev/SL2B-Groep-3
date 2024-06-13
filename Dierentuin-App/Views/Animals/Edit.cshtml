@@ -4,12 +4,12 @@
     ViewData["Title"] = "Edit";
 }
 
-<div class="row d-flex justify-content-center mt-3">
+<div class="row d-flex justify-content-center my-3">
     <div class="col-11 col-md-8 border rounded-3 border-dark p-4 mb-3">
         <form asp-action="Edit" class="d-flex flex-column gap-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <h1 class="">Edit Animal</h1>
+            <h1 class="">Edit Animal <i class="bi bi-pencil-square"></i></h1>
             <!-- Name -->
             <div class="row form-group">
                 <div class="col-5">
@@ -141,10 +141,10 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+Edit.cshtml
+7 KB
