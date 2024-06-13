@@ -103,6 +103,22 @@ body > div {
         width: 150px; /* Set fixed width for items */
     }
 
+    /* Stall styling */
+    .stall-container {
+        width: calc(@Model.Size * 40px); /* Initial width based on stall size */
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        margin-top: 20px;
+        padding: 10px;
+        box-sizing: border-box; /* Include padding in width calculation */
+        transition: width 0.3s ease-in-out; /* Smooth transition for width changes */
+    }
+
+    .animal-item {
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
         /* GitHub icon styling */
         .footer-custom .grid-item img.github-icon {
             width: 20px;
