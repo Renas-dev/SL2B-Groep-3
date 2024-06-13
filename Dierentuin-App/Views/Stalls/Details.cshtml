@@ -2,16 +2,22 @@
 
 @{
     ViewData["Title"] = "Stall Details";
+    // Retrieving the current day/night state from ViewData. The state is stored as a boolean value in the "IsDay" key.
+    bool isDay = (bool)ViewData["IsDay"];
+
+    string timeOfDay = isDay ? "day" : "night";
 }
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
+
 <body>
 
 
@@ -57,7 +63,8 @@
         @foreach (var animal in Model.Animals)
         {
             <div class="animal-item">
-                <strong>@animal.Name</strong><br />
+                <strong class="animal-name" data-category="@animal.Category" data-prey="@animal.Prey"
+                    data-activity-pattern="@animal.ActivityPattern">@animal.Name</strong><br />
                 Size: @animal.SpaceRequirement.ToString("F2") m²
             </div>
         }
@@ -69,14 +76,76 @@
     </div>
 
     <script>
+
+        function updateAnimalNames(isDay) {
+            // Get all animal name elements
+            var animalNames = document.querySelectorAll('.animal-name');
+
+            // Create an array of all animal categories
+            var animalCategories = Array.from(animalNames).map(animalName => animalName.getAttribute('data-category'));
+
+            // Iterate over each animal name element
+            animalNames.forEach(animalName => {
+                // Get the activity pattern, category, and prey of the animal
+                var activityPattern = animalName.getAttribute('data-activity-pattern');
+                var category = animalName.getAttribute('data-category');
+                var prey = animalName.getAttribute('data-prey');
+
+                // Set the CSS class based on the activity pattern and day/night status
+                var isAwake = false;
+                if (activityPattern === 'Diurnal') {
+                    isAwake = isDay;
+                    animalName.className = isDay ? 'diurnal-day' : 'diurnal-night';
+                } else if (activityPattern === 'Nocturnal') {
+                    isAwake = !isDay;
+                    animalName.className = isDay ? 'nocturnal-day' : 'nocturnal-night';
+                } else if (activityPattern === 'Cathemeral') {
+                    isAwake = !isDay;
+                    animalName.className = isDay ? 'nocturnal-day' : 'diurnal-day';
+                }
+
+                // Check if the prey of the animal exists in the categories of other animals
+                // and if the animal is awake
+                if (isAwake) {
+                    if (animalCategories.includes(prey)) {
+                        // If the prey exists, add the text "animal ate prey" after the animal name
+                        animalName.textContent = animalName.textContent + ' (Animal ate prey)';
+                    } else {
+                        // If the prey does not exist, add the text "animal ate food" after the animal name
+                        animalName.textContent = animalName.textContent + ' (There whas no food)';
+                    }
+                }
+            });
+        }
+
+        var isDay = @Json.Serialize(ViewBag.IsDay);
+        updateAnimalNames(isDay);
+
+
+        //Calls api every 60 seconds to check to update the time cycle without refreshing the page and change their class depending if its they are asleep or awake
+        setInterval(function () {
+            fetch('/DayNight/IsDay')
+                .then(response => response.json())
+                .then(isDay => {
+                    document.documentElement.setAttribute('data-theme', isDay ? "day" : "night");
+                    updateAnimalNames(isDay);
+                });
+        }, 60000);
+
+
+        // Set theme based on time of day
+        document.documentElement.setAttribute('data-theme', '@timeOfDay');
+
         // Calculate the total space requirement of animals
-        var totalSpace = @Model.Animals.Sum(a => a.SpaceRequirement).;
+        //var totalSpace = @Model.Animals.Sum(a => a.SpaceRequirement);
+        var totalSpace = 5;
 
         // Adjust the width of the stall container based on the total space required
         var stallContainer = document.getElementById('stall-container');
-        var requiredWidth = Math.max(300, totalSpace * 40); 
+        var requiredWidth = Math.max(300, totalSpace * 40);
         stallContainer.style.width = requiredWidth + 'px';
     </script>
 
 </body>
+
 </html>

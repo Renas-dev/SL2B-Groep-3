@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Dierentuin_App.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Dierentuin_App.Data;
@@ -10,12 +11,14 @@ namespace Dierentuin_App.Controllers
 {
     public class StallsController : Controller
     {
+        private readonly DayNightService _dayNightService;
         private readonly Dierentuin_AppContext _context;
         private readonly ILogger<StallsController> _logger;
 
-        public StallsController(Dierentuin_AppContext context, ILogger<StallsController> logger)
+        public StallsController(Dierentuin_AppContext context, DayNightService dayNightService, ILogger<StallsController> logger)
         {
             _context = context;
+            _dayNightService = dayNightService;
             _logger = logger;
         }
 
@@ -65,6 +68,8 @@ namespace Dierentuin_App.Controllers
         // GET: Stalls/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            ViewData["IsDay"] = _dayNightService.IsDay;
+
             if (id == null)
             {
                 return NotFound();
