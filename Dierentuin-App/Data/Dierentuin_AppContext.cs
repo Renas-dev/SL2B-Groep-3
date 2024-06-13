@@ -63,9 +63,9 @@ namespace Dierentuin_App.Data
             var faker = new Faker<Stall>()
                 .RuleFor(s => s.Id, f => 0) // Let EF handle the ID
                 .RuleFor(s => s.Name, f => f.Address.City())
-                .RuleFor(s => s.Climate, f => f.PickRandom(new[] { "Tropical", "Temperate", "Arctic", "Desert" }))
-                .RuleFor(s => s.HabitatType, f => f.PickRandom(new[] { "Savannah", "Forest", "Grassland", "Wetland" }))
-                .RuleFor(s => s.SecurityLevel, f => f.PickRandom(new[] { "Low", "Medium", "High", "Critical" }))
+                .RuleFor(s => s.Climate, f => f.PickRandom(new[] { "Tropical", "Arid", "Temperate", "Continental", "Polar" }))
+                .RuleFor(s => s.HabitatType, f => f.PickRandom(new[] { "Forest", "Savanna", "Desert", "Wetlands", "Grassland", "Tundra", "Marine", "Freshwater" }))
+                .RuleFor(s => s.SecurityLevel, f => f.PickRandom(new[] { "Low", "Medium", "High" }))
                 .RuleFor(s => s.Size, f => Math.Round(f.Random.Double(50, 200), 2)); // Round to 2 decimal places
             // Generate the stalls and print them to the console
             var stalls = faker.Generate(count);
@@ -78,11 +78,13 @@ namespace Dierentuin_App.Data
         }
         // Add method to generate animals
         private List<Animal> GenerateAnimals(int count)
-        {// Generate a list of animals with random data
-            var validStallIds = Stall.Select(s => s.Id).ToList(); // Fetch existing Stall IDs
+        {
+            // Fetch existing Stall IDs
+            var validStallIds = Stall.Select(s => s.Id).ToList();
+
             // Generate a list of animals with random data
             var faker = new Faker<Animal>()
-                .RuleFor(a => a.Id, f => 0)
+                .RuleFor(a => a.Id, f => 0) // Let EF handle the ID
                 .RuleFor(a => a.Name, f => f.Name.FirstName())
                 .RuleFor(a => a.Species, f => f.PickRandom(new[] { "Lion", "Tiger", "Elephant", "Giraffe", "Zebra" }))
                 .RuleFor(a => a.Category, f => f.PickRandom(new[] { "Mammal", "Bird", "Reptile", "Amphibian", "Fish" }))
@@ -91,17 +93,21 @@ namespace Dierentuin_App.Data
                 .RuleFor(a => a.ActivityPattern, f => f.PickRandom<Animal.AnimalActivityPattern>())
                 .RuleFor(a => a.Prey, f => f.PickRandom(new[] { "None", "Insects", "Small animals", "Fish", "Plants" }))
                 .RuleFor(a => a.Enclosure, f => f.Address.StreetName())
-                .RuleFor(a => a.SpaceRequirement, f => f.Random.Double(1, 5))
+                .RuleFor(a => a.SpaceRequirement, f => Math.Round(f.Random.Double(1, 5), 2)) // Round to 2 decimal places
                 .RuleFor(a => a.SecurityRequirement, f => f.PickRandom<Animal.AnimalSecurityRequirement>())
                 .RuleFor(a => a.StallId, f => f.PickRandom(validStallIds)); // Ensure valid Stall Ids
+
             // Generate the animals and print them to the console
             var animals = faker.Generate(count);
             Console.WriteLine($"Generated {animals.Count} animals.");
+
             // Print the generated animals to the console
             foreach (var animal in animals)
             {
-                Console.WriteLine($"Generated animal: {animal.Name}, Species: {animal.Species}, Enclosure: {animal.Enclosure}");
-            }// Return the generated animals
+                Console.WriteLine($"Generated animal: {animal.Name}, Species: {animal.Species}, Enclosure: {animal.Enclosure}, Space Requirement: {animal.SpaceRequirement}");
+            }
+
+            // Return the generated animals
             return animals;
         }
     }

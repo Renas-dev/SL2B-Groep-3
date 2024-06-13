@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Dierentuin_App.Data;
 using Dierentuin_App.Models;
 
@@ -21,10 +19,47 @@ namespace Dierentuin_App.Controllers
             _logger = logger;
         }
 
-        // GET: Stalls
-        public async Task<IActionResult> Index()
+        // GET: Stalls/Index
+        [HttpGet]
+        public async Task<IActionResult> Index(string searchString, string climate, string habitatType, string securityLevel)
         {
-            return View(await _context.Stall.ToListAsync());
+            // Use IQueryable to build query dynamically
+            var stalls = _context.Stall.AsQueryable();
+
+            // Apply filters based on parameters
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                stalls = stalls.Where(s =>
+                    s.Name.Contains(searchString) ||
+                    s.Climate.Contains(searchString) ||
+                    s.HabitatType.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(climate))
+            {
+                stalls = stalls.Where(s => s.Climate == climate);
+            }
+
+            if (!string.IsNullOrEmpty(habitatType))
+            {
+                stalls = stalls.Where(s => s.HabitatType == habitatType);
+            }
+
+            if (!string.IsNullOrEmpty(securityLevel))
+            {
+                stalls = stalls.Where(s => s.SecurityLevel == securityLevel);
+            }
+
+            return View(await stalls.ToListAsync());
+        }
+
+        // POST: Stalls/Index
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> IndexPost(string searchString, string climate, string habitatType, string securityLevel)
+        {
+            // Redirect to the GET action to apply the filtering
+            return RedirectToAction(nameof(Index), new { searchString, climate, habitatType, securityLevel });
         }
 
         // GET: Stalls/Details/5
@@ -36,11 +71,22 @@ namespace Dierentuin_App.Controllers
             }
 
             var stall = await _context.Stall
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(s => s.Animals)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
             if (stall == null)
             {
                 return NotFound();
             }
+
+            // Calculate total space requirement of assigned animals
+            double totalSpaceRequirement = stall.Animals.Sum(a => a.SpaceRequirement);
+
+            // Update the stall size in the database
+            stall.Size = totalSpaceRequirement;
+
+            // Save changes to database
+            await _context.SaveChangesAsync();
 
             return View(stall);
         }
@@ -52,8 +98,6 @@ namespace Dierentuin_App.Controllers
         }
 
         // POST: Stalls/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Climate,HabitatType,SecurityLevel,Size")] Stall stall)
@@ -92,8 +136,6 @@ namespace Dierentuin_App.Controllers
         }
 
         // POST: Stalls/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Climate,HabitatType,SecurityLevel,Size")] Stall stall)

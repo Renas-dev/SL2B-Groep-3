@@ -13,11 +13,12 @@ namespace Dierentuin_App.Models
         public string HabitatType { get; set; } = string.Empty;
         public string SecurityLevel { get; set; } = string.Empty;
         public double Size { get; set; }
-        public virtual ICollection<Animal> Animals { get; set; }
+        public virtual ICollection<Animal> Animals { get; set; } = new List<Animal>();
 
         public Stall()
         {
             Animals = new HashSet<Animal>();
+            Size = 0.0;
         }
     }
 

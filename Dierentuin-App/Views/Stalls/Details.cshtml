@@ -1,0 +1,99 @@
+﻿@model Dierentuin_App.Models.Stall
+
+@{
+    ViewData["Title"] = "Stall Details";
+}
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        .stall-container {
+            width: calc(@Model.Size * 40px); /* Initial width based on stall size */
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            padding: 10px;
+            box-sizing: border-box; /* Include padding in width calculation */
+            transition: width 0.3s ease-in-out; /* Smooth transition for width changes */
+        }
+
+        .animal-item {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Stall Details</h1>
+
+    <div>
+        <h4>Updated Stall</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Climate)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Climate)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.HabitatType)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.HabitatType)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.SecurityLevel)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.SecurityLevel)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Size)
+            </dt>
+            <dd class="col-sm-9">
+                @Model.Size.ToString("F2") m²
+            </dd>
+        </dl>
+    </div>
+
+    <div id="stall-container" class="stall-container">
+        <h3>Animals in the Stall:</h3>
+        @foreach (var animal in Model.Animals)
+        {
+            <div class="animal-item">
+                <strong>@animal.Name</strong><br />
+                Size: @animal.SpaceRequirement.ToString("F2") m²
+            </div>
+        }
+    </div>
+
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+    <script>
+        // Calculate the total space requirement of animals
+        var totalSpace = @Model.Animals.Sum(a => a.SpaceRequirement).;
+
+        // Adjust the width of the stall container based on the total space required
+        var stallContainer = document.getElementById('stall-container');
+        var requiredWidth = Math.max(300, totalSpace * 40); // Adjust multiplier as needed for scaling
+        stallContainer.style.width = requiredWidth + 'px';
+    </script>
+
+</body>
+</html>

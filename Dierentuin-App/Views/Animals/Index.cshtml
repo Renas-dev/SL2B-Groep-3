@@ -4,7 +4,6 @@
     ViewData["Title"] = "Index";
 }
 
-<!-- Title & Create new animal button -->
 <div class="row mt-3">
     <div class="col-12 d-flex justify-content-between align-items-center">
         <h1>Animals</h1>
@@ -12,14 +11,12 @@
     </div>
 </div>
 
-<!-- Filter button for small-medium screen -->
 <div class="mt-5">
     <button type="button" class="btn btn-dark d-md-none" data-bs-toggle="modal" data-bs-target="#filterModal">
         Filters
     </button>
 </div>
 
-<!-- Modal for small-medium screen -->
 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -29,17 +26,17 @@
             </div>
             <div class="modal-body">
                 <form asp-action="Index" method="get" class="row g-3 align-items-center">
+                    <!-- Search name with icon -->
                     <div class="col-12">
-                        <!-- Search name with icon -->
-                        <div class="col-12">
-                            <div class="input-group">
-                                <input type="text" name="searchString" placeholder="Search by name..." class="form-control" />
-                                <span class="input-group-text">
-                                    <i class="bi bi-search"></i>
-                                </span>
-                            </div>
+                        <div class="input-group">
+                            <input type="text" name="searchString" placeholder="Search by name..." class="form-control" />
+                            <span class="input-group-text">
+                                <i class="bi bi-search"></i>
+                            </span>
                         </div>
-                        <!-- Size -->
+                    </div>
+                    <!-- Size -->
+                    <div class="col-12">
                         <label for="sizeDropdown" class="form-label mt-3">Size:</label>
                         <select id="sizeDropdown" name="size" class="form-select">
                             <option value="">All</option>
@@ -96,7 +93,6 @@
     </div>
 </div>
 
-<!-- Filters for larger screens -->
 <div class="row mt-3 d-none d-md-flex">
     <div class="col-12">
         <form asp-action="Index" method="get" class="row g-3 align-items-center">
@@ -160,12 +156,11 @@
     </div>
 </div>
 
-<!-- Table -->
 <div class="row my-4">
     <div class="col-12 mb-3">
         <div class="table-responsive rounded-3">
             <table class="table table-striped table-hover table-bordered">
-                <!-- Head -->
+                <!-- Table header -->
                 <thead>
                     <tr class="table-dark">
                         <th>@Html.DisplayNameFor(model => model.Name)</th>
@@ -178,16 +173,16 @@
                         <th>@Html.DisplayNameFor(model => model.Enclosure)</th>
                         <th>@Html.DisplayNameFor(model => model.SpaceRequirement)</th>
                         <th>@Html.DisplayNameFor(model => model.SecurityRequirement)</th>
-                        <th>@Html.DisplayNameFor(model => model.Stall)</th>
-                        <th class="d-flex justify-content-center">Change Animal</th>
+                        <th>Stall</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
-                <!-- Body -->
+                <!-- Table body -->
                 <tbody>
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td><a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">@Html.DisplayFor(modelItem => item.Name)</a></td>
+                            <td>@Html.DisplayFor(modelItem => item.Name)</td>
                             <td>@Html.DisplayFor(modelItem => item.Species)</td>
                             <td>@Html.DisplayFor(modelItem => item.Category)</td>
                             <td>@Html.DisplayFor(modelItem => item.Size)</td>
@@ -197,8 +192,8 @@
                             <td>@Html.DisplayFor(modelItem => item.Enclosure)</td>
                             <td>@item.SpaceRequirement.ToString("N2") m<sup>2</sup></td>
                             <td>@Html.DisplayFor(modelItem => item.SecurityRequirement)</td>
-                            <td>@Html.DisplayFor(modelItem => item.StallId)</td>
-                            <td class="d-flex justify-content-center gap-1">
+                            <td>@Html.DisplayFor(modelItem => item.Stall.Name)</td> <!-- Ensure this line is correct -->
+                            <td>
                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
                                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
                             </td>
