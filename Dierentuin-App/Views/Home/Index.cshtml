@@ -63,6 +63,16 @@
 </div>
 
 <script>
+
+    //Calls api every 60 seconds to check to update the time cycle without refreshing the page
+    setInterval(function () {
+        fetch('/DayNight/IsDay')
+            .then(response => response.json())
+            .then(data => {
+                document.documentElement.setAttribute('data-theme', data ? "day" : "night");
+            });
+    }, 60000);
+
     // Set theme based on time of day
     document.documentElement.setAttribute('data-theme', '@timeOfDay');
 
@@ -74,3 +84,4 @@
     var requiredWidth = Math.max(300, totalSpace * 40);
     stallContainer.style.width = requiredWidth + 'px';
 </script>
+

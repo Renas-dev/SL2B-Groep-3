@@ -43,12 +43,6 @@ namespace Dierentuin_App.Controllers
             return View();
         }
 
-        public IActionResult ToggleDayNight()
-        {
-            _dayNightService.ToggleDayNight();
-            return RedirectToAction("Index");
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
