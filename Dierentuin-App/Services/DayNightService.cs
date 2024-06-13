@@ -1,14 +1,20 @@
-﻿namespace Dierentuin_App.Services
+﻿using System;
+
+namespace Dierentuin_App.Services
 {
     // This service is used to keep track of the day and night cycle in the application.
     public class DayNightService
     {
-        private bool _isDay = true;
-        public bool IsDay => _isDay;
-        // This method is used to toggle the day and night cycle.
-        public void ToggleDayNight()
+        public bool IsDay => DetermineIfDay();
+
+        // This method is used to determine if it's day or night based on the current time in Amsterdam.
+        private bool DetermineIfDay()
         {
-            _isDay = !_isDay;
+            TimeZoneInfo amsterdamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+            DateTime amsterdamTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, amsterdamTimeZone);
+            int lastDigitOfMinutes = amsterdamTime.Minute % 10;
+
+            return lastDigitOfMinutes <= 4;
         }
     }
 }

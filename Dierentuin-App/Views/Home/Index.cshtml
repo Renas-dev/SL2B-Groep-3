@@ -12,6 +12,13 @@
     <h1 class="display-4">Welkom bij de Zoo applicatie! me-ow!! this is the final runner test v.6.5! </h1>
 </div>
 <script>
-
-document.documentElement.setAttribute('data-theme', '@timeOfDay');
+    //Calls api every 60 seconds to check to update the time cycle without refreshing the page
+    setInterval(function () {
+        fetch('/DayNight/IsDay')
+            .then(response => response.json())
+            .then(data => {
+                document.documentElement.setAttribute('data-theme', data ? "day" : "night");
+            });
+    }, 60000);
+    document.documentElement.setAttribute('data-theme', '@timeOfDay');
 </script>

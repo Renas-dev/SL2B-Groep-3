@@ -33,12 +33,7 @@ namespace Dierentuin_App.Controllers
         {
             return View();
         }
-        // The ToggleDayNight action method toggles the day/night state and redirects to the Index action method.
-        public IActionResult ToggleDayNight()
-        {
-            _dayNightService.ToggleDayNight();
-            return RedirectToAction("Index");
-        }
+
         // The Error action method returns the Error view.
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
