@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dierentuin_App.Data;
 using Dierentuin_App.Models;
+using X.PagedList;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Dierentuin_App.Controllers
 {
@@ -20,19 +22,23 @@ namespace Dierentuin_App.Controllers
         }
 
         // GET: Animals
-        public async Task<IActionResult> Index(string searchString, Animal.AnimalSize? size, Animal.AnimalDietaryClass? dietaryClass, Animal.AnimalActivityPattern? activityPattern, Animal.AnimalSecurityRequirement? securityRequirement)
-        { // Add search parameters
-            var animals = from a in _context.Animal
-                          select a;
+        public async Task<IActionResult> Index(string searchString, Animal.AnimalSize? size, Animal.AnimalDietaryClass? dietaryClass, Animal.AnimalActivityPattern? activityPattern, Animal.AnimalSecurityRequirement? securityRequirement, int? page)
+        {
+            // Add search parameters and include Stall navigation property
+            IQueryable<Animal> animals = _context.Animal.Include(a => a.Stall);
+
             // Search string values
             if (!String.IsNullOrEmpty(searchString))
             {
+                // Convert search string value to lowercase
+                var lowerSearchString = searchString.ToLower();
                 animals = animals.Where(a =>
-                    a.Name.Contains(searchString) ||
-                    a.Species.Contains(searchString) ||
-                    a.Category.Contains(searchString) ||
-                    a.Prey.Contains(searchString));
+                    (a.Name != null && a.Name.ToLower().Contains(lowerSearchString)) ||
+                    (a.Species != null && a.Species.ToLower().Contains(lowerSearchString)) ||
+                    (a.Category != null && a.Category.ToLower().Contains(lowerSearchString)) ||
+                    (a.Prey != null && a.Prey.ToLower().Contains(lowerSearchString)));
             }
+
             // Search enum dropdown values
             if (size.HasValue || dietaryClass.HasValue || activityPattern.HasValue || securityRequirement.HasValue)
             {
@@ -43,7 +49,16 @@ namespace Dierentuin_App.Controllers
                     (!securityRequirement.HasValue || a.SecurityRequirement == securityRequirement)
                 );
             }
-            return View(await animals.ToListAsync());
+
+            // Number of items per page
+            int pageSize = 3;
+            // Current page number (default is 1)
+            int pageNumber = (page ?? 1);
+
+            // Execute query and return paged list to view
+            var pagedList = await animals.ToPagedListAsync(pageNumber, pageSize);
+            return View(pagedList);
+
         }
 
         // GET: Animals/Details/5
@@ -68,13 +83,11 @@ namespace Dierentuin_App.Controllers
         // GET: Animals/Create
         public IActionResult Create()
         {
-            ViewData["StallId"] = new SelectList(_context.Set<Stall>(), "Id", "Id");
+            ViewData["StallId"] = new SelectList(_context.Stall, "Id", "Name");
             return View();
         }
 
         // POST: Animals/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Species,Category,Size,DietaryClass,ActivityPattern,Prey,Enclosure,SpaceRequirement,SecurityRequirement,StallId")] Animal animal)
@@ -87,14 +100,20 @@ namespace Dierentuin_App.Controllers
                 {
                     // Stall does not exist, return an error
                     ModelState.AddModelError("StallId", "Stall does not exist");
+                    ViewData["StallId"] = new SelectList(_context.Stall, "Id", "Name", animal.StallId);
                     return View(animal);
                 }
 
                 // Stall exists, insert the Animal
                 _context.Add(animal);
                 await _context.SaveChangesAsync();
+
+                // Update the stall's Size property immediately after adding the animal
+                await UpdateStallSize(animal.StallId);
+
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["StallId"] = new SelectList(_context.Stall, "Id", "Name", animal.StallId);
             return View(animal);
         }
 
@@ -111,7 +130,7 @@ namespace Dierentuin_App.Controllers
             {
                 return NotFound();
             }
-            ViewData["StallId"] = new SelectList(_context.Set<Stall>(), "Id", "Id", animal.StallId);
+            ViewData["StallId"] = new SelectList(_context.Stall, "Id", "Name", animal.StallId);
             return View(animal);
         }
 
@@ -131,8 +150,25 @@ namespace Dierentuin_App.Controllers
             {
                 try
                 {
+                    var originalAnimal = await _context.Animal.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+                    if (originalAnimal == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var originalStallId = originalAnimal.StallId;
+
                     _context.Update(animal);
                     await _context.SaveChangesAsync();
+
+                    // Update stall sizes for both the original and new stalls
+                    if (originalStallId != animal.StallId)
+                    {
+                        await UpdateStallSize(originalStallId);
+                        await UpdateStallSize(animal.StallId);
+                    }
+
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -145,11 +181,11 @@ namespace Dierentuin_App.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["StallId"] = new SelectList(_context.Set<Stall>(), "Id", "Id", animal.StallId);
             return View(animal);
         }
+
 
         // GET: Animals/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -176,13 +212,36 @@ namespace Dierentuin_App.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var animal = await _context.Animal.FindAsync(id);
-            if (animal != null)
+            if (animal == null)
             {
-                _context.Animal.Remove(animal);
+                return NotFound();
             }
 
+            var stallId = animal.StallId;
+
+            _context.Animal.Remove(animal);
             await _context.SaveChangesAsync();
+
+            // Update the stall's Size property immediately after deleting the animal
+            await UpdateStallSize(stallId);
+
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task UpdateStallSize(int stallId)
+        {
+            // Calculate total space requirement of animals in the stall
+            double totalSpaceRequirement = await _context.Animal
+                .Where(a => a.StallId == stallId)
+                .SumAsync(a => a.SpaceRequirement);
+
+            // Update the stall's Size property
+            var stall = await _context.Stall.FindAsync(stallId);
+            if (stall != null)
+            {
+                stall.Size = totalSpaceRequirement;
+                await _context.SaveChangesAsync();
+            }
         }
 
         private bool AnimalExists(int id)

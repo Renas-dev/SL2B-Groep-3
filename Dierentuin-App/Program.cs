@@ -20,9 +20,21 @@ var app = builder.Build();
 
 // Seed the database
 using (var scope = app.Services.CreateScope())
-{ // Create a new scope for the service provider
-    var context = scope.ServiceProvider.GetRequiredService<Dierentuin_AppContext>();
-    context.SeedDatabase();
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<Dierentuin_AppContext>();
+
+        // Automatically apply migrations and seed the database
+        context.Database.Migrate(); // Apply pending migrations
+        context.SeedDatabase(); // Seed the database
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
+        Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+    }
 }
 
 // Configure the HTTP request pipeline

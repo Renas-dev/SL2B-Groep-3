@@ -6,20 +6,22 @@
 [data-theme="night"] {
   --color-bg: #2a2a35;
   --color-text: #fff;
+  --stall-bg: black;
 }
 
 [data-theme="day"] {
-  --color-bg: #87cefa;
+    --color-bg: #87cefa;
+    --stall-bg: white;
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  transition: background-color 0.5s ease, color 0.5s ease;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition: background-color 0.5s ease, color 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
 }
 
 html {
@@ -101,6 +103,22 @@ body > div {
         align-items: center;
         background-color: transparent; /* Remove yellow background */
         width: 150px; /* Set fixed width for items */
+    }
+
+    /* Stall styling */
+    .stall-container {
+        width: calc(@Model.Size * 40px); /* Initial width based on stall size */
+        background-color: var(--stall-bg);
+        border: 1px solid #ccc;
+        margin-top: 20px;
+        padding: 10px;
+        box-sizing: border-box; /* Include padding in width calculation */
+        transition: width 0.3s ease-in-out; /* Smooth transition for width changes */
+    }
+
+    .animal-item {
+        margin-bottom: 10px;
+        font-size: 16px;
     }
 
         /* GitHub icon styling */
