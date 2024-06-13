@@ -56,7 +56,7 @@ namespace Dierentuin_App.Controllers
         // POST: Stalls/Index
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> IndexPost(string searchString, string climate, string habitatType, string securityLevel)
+        public IActionResult IndexPost(string searchString, string climate, string habitatType, string securityLevel)
         {
             // Redirect to the GET action to apply the filtering
             return RedirectToAction(nameof(Index), new { searchString, climate, habitatType, securityLevel });
@@ -195,9 +195,8 @@ namespace Dierentuin_App.Controllers
             if (stall != null)
             {
                 _context.Stall.Remove(stall);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
