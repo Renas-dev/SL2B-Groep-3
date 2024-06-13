@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Dierentuin_App.Models.Stall
+
+@{
     ViewData["Title"] = "Home Page";
     // Retrieving the current day/night state from ViewData. The state is stored as a boolean value in the "IsDay" key.
     bool isDay = (bool)ViewData["IsDay"];
@@ -9,9 +11,66 @@
 <!-- Displaying a message that indicates whether it is currently day or night based on the isDay variable. -->
 <p>It's currently @timeOfDay.</p>
 <div class="text-center">
-    <h1 class="display-4">Welkom bij de Zoo applicatie! me-ow!! this is the final runner test v.6.5! </h1>
+    <h1 class="display-4">Welcome to the Zoo Webapp! Created by Group 3</h1>
 </div>
-<script>
 
-document.documentElement.setAttribute('data-theme', '@timeOfDay');
+<div class="my-4">
+    <h4>Updated Stall</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Climate)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Climate)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.HabitatType)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.HabitatType)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.SecurityLevel)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.SecurityLevel)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Size)
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Size.ToString("F2") m²
+        </dd>
+    </dl>
+</div>
+
+<div id="stall-container" class="stall-container mb-4">
+    <h3>First Stall:</h3>
+    @foreach (var animal in Model.Animals)
+    {
+        <div class="animal-item">
+            <strong>@animal.Name</strong><br />
+            Size: @animal.SpaceRequirement.ToString("F2") m²
+        </div>
+    }
+</div>
+
+<script>
+    // Set theme based on time of day
+    document.documentElement.setAttribute('data-theme', '@timeOfDay');
+
+    // Calculate the total space requirement of animals
+    var totalSpace = @Model.Animals.Sum(a => a.SpaceRequirement);
+
+    // Adjust the width of the stall container based on the total space required
+    var stallContainer = document.getElementById('stall-container');
+    var requiredWidth = Math.max(300, totalSpace * 40);
+    stallContainer.style.width = requiredWidth + 'px';
 </script>

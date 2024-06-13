@@ -14,10 +14,9 @@
 </head>
 <body>
 
-    <h1>Stall Details</h1>
 
-    <div>
-        <h4>Updated Stall</h4>
+    <div class="my-4">
+        <h1>Stall Details</h1>
         <hr />
         <dl class="row">
             <dt class="col-sm-3">
@@ -64,8 +63,8 @@
         }
     </div>
 
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <div class="my-4">
+        <a class="btn btn-dark" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
         <a asp-action="Index">Back to List</a>
     </div>
 
@@ -75,7 +74,7 @@
 
         // Adjust the width of the stall container based on the total space required
         var stallContainer = document.getElementById('stall-container');
-        var requiredWidth = Math.max(300, totalSpace * 40); // Adjust multiplier as needed for scaling
+        var requiredWidth = Math.max(300, totalSpace * 40); 
         stallContainer.style.width = requiredWidth + 'px';
     </script>
 
