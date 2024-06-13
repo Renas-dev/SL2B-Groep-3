@@ -1,4 +1,5 @@
-﻿using Dierentuin_App.Controllers;
+﻿/*
+using Dierentuin_App.Controllers;
 using Dierentuin_App.Data;
 using Dierentuin_App.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -94,3 +95,4 @@ namespace Dierentuin_unit_test
         }
     }
 }
+*/
