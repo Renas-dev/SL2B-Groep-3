@@ -1,7 +1,15 @@
-﻿@model IEnumerable<Dierentuin_App.Models.Animal>
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList
+@using Microsoft.AspNetCore.Http
+
+@model X.PagedList.IPagedList<Dierentuin_App.Models.Animal>
+
+
+
 
 @{
     ViewData["Title"] = "Index";
+    var exampleAnimal = Model.FirstOrDefault();
 }
 
 <!-- Title & Create new animal button -->
@@ -168,18 +176,18 @@
                 <!-- Head -->
                 <thead>
                     <tr class="table-dark">
-                        <th>@Html.DisplayNameFor(model => model.Name)</th>
-                        <th>@Html.DisplayNameFor(model => model.Species)</th>
-                        <th>@Html.DisplayNameFor(model => model.Category)</th>
-                        <th>@Html.DisplayNameFor(model => model.Size)</th>
-                        <th>@Html.DisplayNameFor(model => model.DietaryClass)</th>
-                        <th>@Html.DisplayNameFor(model => model.ActivityPattern)</th>
-                        <th>@Html.DisplayNameFor(model => model.Prey)</th>
-                        <th>@Html.DisplayNameFor(model => model.Enclosure)</th>
-                        <th>@Html.DisplayNameFor(model => model.SpaceRequirement)</th>
-                        <th>@Html.DisplayNameFor(model => model.SecurityRequirement)</th>
-                        <th>@Html.DisplayNameFor(model => model.Stall)</th>
-                        <th class="d-flex justify-content-center">Change Animal</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Species)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Category)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Size)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().DietaryClass)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().ActivityPattern)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Prey)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Enclosure)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().SpaceRequirement)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().SecurityRequirement)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Stall)</th>
+                            <th class="d-flex justify-content-center">Change Animal</th>
                     </tr>
                 </thead>
                 <!-- Body -->
@@ -208,4 +216,17 @@
             </table>
         </div>
     </div>
+</div>
+
+<!-- Pagination controls -->
+<div class="pagination-container">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new
+        {
+            page,
+            searchString = ViewContext.HttpContext.Request.Query["searchString"],
+            size = ViewContext.HttpContext.Request.Query["size"],
+            dietaryClass = ViewContext.HttpContext.Request.Query["dietaryClass"],
+            activityPattern = ViewContext.HttpContext.Request.Query["activityPattern"],
+            securityRequirement = ViewContext.HttpContext.Request.Query["securityRequirement"]
+        }))
 </div>

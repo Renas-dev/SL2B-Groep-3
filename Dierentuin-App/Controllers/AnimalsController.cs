@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dierentuin_App.Data;
 using Dierentuin_App.Models;
+using X.PagedList;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Dierentuin_App.Controllers
 {
@@ -20,19 +22,24 @@ namespace Dierentuin_App.Controllers
         }
 
         // GET: Animals
-        public async Task<IActionResult> Index(string searchString, Animal.AnimalSize? size, Animal.AnimalDietaryClass? dietaryClass, Animal.AnimalActivityPattern? activityPattern, Animal.AnimalSecurityRequirement? securityRequirement)
-        { // Add search parameters
+        public async Task<IActionResult> Index(string searchString, Animal.AnimalSize? size, Animal.AnimalDietaryClass? dietaryClass, Animal.AnimalActivityPattern? activityPattern, Animal.AnimalSecurityRequirement? securityRequirement, int? page)
+        { 
+            // Add search parameters
             var animals = from a in _context.Animal
                           select a;
+
             // Search string values
             if (!String.IsNullOrEmpty(searchString))
             {
+                // Convert search string value to lowercase
+                var lowerSearchString = searchString.ToLower();
                 animals = animals.Where(a =>
-                    a.Name.Contains(searchString) ||
-                    a.Species.Contains(searchString) ||
-                    a.Category.Contains(searchString) ||
-                    a.Prey.Contains(searchString));
+                    (a.Name != null && a.Name.ToLower().Contains(lowerSearchString)) ||
+                    (a.Species != null && a.Species.ToLower().Contains(lowerSearchString)) ||
+                    (a.Category != null && a.Category.ToLower().Contains(lowerSearchString)) ||
+                    (a.Prey != null && a.Prey.ToLower().Contains(lowerSearchString)));
             }
+
             // Search enum dropdown values
             if (size.HasValue || dietaryClass.HasValue || activityPattern.HasValue || securityRequirement.HasValue)
             {
@@ -43,7 +50,16 @@ namespace Dierentuin_App.Controllers
                     (!securityRequirement.HasValue || a.SecurityRequirement == securityRequirement)
                 );
             }
-            return View(await animals.ToListAsync());
+
+            // Number of items per page
+            int pageSize = 3; 
+            // Current page number (default is 1)
+            int pageNumber = (page ?? 1); 
+
+            // Execute query and return paged list to view
+            var pagedList = await animals.ToPagedListAsync(pageNumber, pageSize);
+            return View(pagedList);
+
         }
 
         // GET: Animals/Details/5
