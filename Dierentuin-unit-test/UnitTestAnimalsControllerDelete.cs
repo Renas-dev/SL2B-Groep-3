@@ -34,6 +34,7 @@ namespace Dierentuin_unit_test
                 // Arrange: Add a test animal to the in-memory database
                 context.Animal.Add(new Animal
                 {
+                    Id = 1,
                     Name = "Tiger",
                     Species = "Panthera tigris",
                     Category = "Mammal",
