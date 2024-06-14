@@ -73,9 +73,15 @@
 
     <div class="my-4">
         <a class="btn btn-dark" onclick="feedAllAnimals()">Feed all animals</a> |
-        <a class="btn btn-dark" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
         <a asp-action="Index">Back to List</a>
     </div>
+
+	<div class ="mt-5 text-end">
+        <!-- Displaying a message that indicates whether it is currently day or night based on the isDay variable. -->
+        <p class="text-end mt-5">It's currently @timeOfDay</p>
+    </div>
+    
 
     <script>
 
@@ -154,7 +160,6 @@
 
         var isDay = @Json.Serialize(ViewBag.IsDay);
         updateAnimalNames(isDay);
-
 
         //Calls api every 60 seconds to check to update the time cycle without refreshing the page and change their class depending if its they are asleep or awake
         setInterval(function () {
