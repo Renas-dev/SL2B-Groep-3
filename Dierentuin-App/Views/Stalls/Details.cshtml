@@ -64,13 +64,15 @@
         {
             <div class="animal-item">
                 <strong class="animal-name" data-category="@animal.Category" data-prey="@animal.Prey"
-                    data-activity-pattern="@animal.ActivityPattern">@animal.Name</strong><br />
+                    data-activity-pattern="@animal.ActivityPattern"
+                    data-original-name="@animal.Name">@animal.Name</strong><br />
                 Size: @animal.SpaceRequirement.ToString("F2") m²
             </div>
         }
     </div>
 
     <div class="my-4">
+        <a class="btn btn-dark" onclick="feedAllAnimals()">Feed all animals</a> |
         <a class="btn btn-dark" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
         <a asp-action="Index">Back to List</a>
     </div>
@@ -78,6 +80,7 @@
     <script>
 
         function updateAnimalNames(isDay) {
+            console.log("test1" + isDay)
             // Get all animal name elements
             var animalNames = document.querySelectorAll('.animal-name');
 
@@ -91,17 +94,31 @@
                 var category = animalName.getAttribute('data-category');
                 var prey = animalName.getAttribute('data-prey');
 
+                // Store the original animal name if it's not already stored
+                if (!animalName.hasAttribute('data-original-name')) {
+                    animalName.setAttribute('data-original-name', animalName.textContent);
+                }
+
+                // Reset the animal name to the original name
+                animalName.textContent = animalName.getAttribute('data-original-name');
+
+                // Remove existing activity classes
+                animalName.classList.remove('diurnal-day', 'diurnal-night', 'nocturnal-day', 'nocturnal-night');
+
                 // Set the CSS class based on the activity pattern and day/night status
                 var isAwake = false;
                 if (activityPattern === 'Diurnal') {
                     isAwake = isDay;
-                    animalName.className = isDay ? 'diurnal-day' : 'diurnal-night';
+                    animalName.classList.add(isDay ? 'diurnal-day' : 'diurnal-night');
+                    animalName.textContent += isDay ? ' (Animal is awake)' : ' (Animal is asleep)';
                 } else if (activityPattern === 'Nocturnal') {
                     isAwake = !isDay;
-                    animalName.className = isDay ? 'nocturnal-day' : 'nocturnal-night';
+                    animalName.classList.add(isDay ? 'nocturnal-day' : 'nocturnal-night');
+                    animalName.textContent += isDay ? ' (Animal is asleep)' : ' (Animal is awake)';
                 } else if (activityPattern === 'Cathemeral') {
                     isAwake = !isDay;
-                    animalName.className = isDay ? 'nocturnal-day' : 'diurnal-day';
+                    animalName.classList.add(isDay ? 'nocturnal-day' : 'diurnal-day');
+                    animalName.textContent += isDay ? ' (Animal is awake)' : ' (Animal is awake)';
                 }
 
                 // Check if the prey of the animal exists in the categories of other animals
@@ -109,11 +126,28 @@
                 if (isAwake) {
                     if (animalCategories.includes(prey)) {
                         // If the prey exists, add the text "animal ate prey" after the animal name
-                        animalName.textContent = animalName.textContent + ' (Animal ate prey)';
+                        animalName.textContent += ' (Animal ate prey)';
                     } else {
                         // If the prey does not exist, add the text "animal ate food" after the animal name
-                        animalName.textContent = animalName.textContent + ' (There whas no food)';
+                        animalName.textContent += ' (There was no food)';
                     }
+                }
+            });
+        }
+
+        function feedAllAnimals() {
+            var animalNames = document.querySelectorAll('.animal-name');
+
+            animalNames.forEach(animalName => {
+                var text = animalName.textContent;
+                var index = text.indexOf(')');
+                if (index !== -1) {
+                    // Get the text before the first ')'
+                    var newText = text.substring(0, index + 1);
+                    // Append the new text
+                    newText += ' (Has eaten)';
+                    // Update the text content of the animal name element
+                    animalName.textContent = newText;
                 }
             });
         }
@@ -137,8 +171,7 @@
         document.documentElement.setAttribute('data-theme', '@timeOfDay');
 
         // Calculate the total space requirement of animals
-        //var totalSpace = @Model.Animals.Sum(a => a.SpaceRequirement);
-        var totalSpace = 5;
+        var totalSpace = @Model.Animals.Sum(a => a.SpaceRequirement).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
 
         // Adjust the width of the stall container based on the total space required
         var stallContainer = document.getElementById('stall-container');
