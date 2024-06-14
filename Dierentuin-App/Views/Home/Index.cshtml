@@ -5,62 +5,49 @@
     // Retrieving the current day/night state from ViewData. The state is stored as a boolean value in the "IsDay" key.
     bool isDay = (bool)ViewData["IsDay"];
 
-    string timeOfDay = isDay ? "day" : "night";
+    string timeOfDay = isDay ? "day ☀️" : "night 🌙";
 }
 
-<!-- Displaying a message that indicates whether it is currently day or night based on the isDay variable. -->
-<p>It's currently @timeOfDay.</p>
-<div class="text-center">
-    <h1 class="display-4">Welcome to the Zoo Webapp! Created by Group 3</h1>
-</div>
+<!-- Title -->
+<h1 class="d-flex justify-content-center mt-4 title-home">
+    Welcome to the Zoo application created by Group 3
+</h1>
 
-<div class="my-4">
-    <h4>Updated Stall</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Climate)
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.Climate)
-        </dd>
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.HabitatType)
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.HabitatType)
-        </dd>
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.SecurityLevel)
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.SecurityLevel)
-        </dd>
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Size)
-        </dt>
-        <dd class="col-sm-9">
-            @Model.Size.ToString("F2") m²
-        </dd>
-    </dl>
-</div>
-
-<div id="stall-container" class="stall-container mb-4">
-    <h3>First Stall:</h3>
-    @foreach (var animal in Model.Animals)
-    {
-        <div class="animal-item">
-            <strong>@animal.Name</strong><br />
-            Size: @animal.SpaceRequirement.ToString("F2") m²
+<!-- Guide -->
+<div class="row my-4 d-flex justify-content-center">
+    <div class="col-11 col-md-7 mb-3 border rounded-3 border-dark p-0">
+        <div class="bg-dark p-4">
+			<h2 class="text-light ">Zoo application Guideline:</h2>
         </div>
-    }
+        
+        <div class="px-4 mt-4">
+            <h4>Create Animal/Stall</h4>
+            <p>Step 1: Create a stall by going to stall.</p>
+            <p>Step 2: Create an animal by going to animal and assign it to the newly created stall.</p>
+            <p>
+                Step 3: To view the stall and the assigned animal,
+                go to stall index and click on the name of the stall.
+            </p>
+        </div>
+        <div class="px-4 mt-4">
+            <h4>Day/Night</h4>
+            <p>
+                The application has a 10 minute day/night cycle which displays “animal is awake” or 
+                “animal is sleeping” based on the animal activity pattern.
+            </p>
+        </div>
+        <div class="px-4 my-4">
+            <h4>Feeding animals</h4>
+            <p>
+                Once an animal is hungry, it will display “Animal has not eaten”. 
+                Click on the “Feed all animals” button to feed all animals.
+            </p>
+        </div>
+    </div>
 </div>
+
+<!-- Displaying a message that indicates whether it is currently day or night based on the isDay variable. -->
+<p class="text-end mt-5">It's currently @timeOfDay</p> 
 
 <script>
 
