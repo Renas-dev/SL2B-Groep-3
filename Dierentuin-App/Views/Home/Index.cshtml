@@ -63,13 +63,5 @@
 
     // Set theme based on time of day
     document.documentElement.setAttribute('data-theme', '@timeOfDay');
-
-    // Calculate the total space requirement of animals
-    var totalSpace = @Model.Animals.Sum(a => a.SpaceRequirement);
-
-    // Adjust the width of the stall container based on the total space required
-    var stallContainer = document.getElementById('stall-container');
-    var requiredWidth = Math.max(300, totalSpace * 40);
-    stallContainer.style.width = requiredWidth + 'px';
 </script>
 

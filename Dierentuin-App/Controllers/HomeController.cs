@@ -23,14 +23,7 @@ namespace Dierentuin_App.Controllers
         public IActionResult Index()
         {
             ViewData["IsDay"] = _dayNightService.IsDay;
-
-            // Fetch the stall with the most animals
-            var stallWithMostAnimals = _context.Stall
-                                               .Include(s => s.Animals)
-                                               .OrderByDescending(s => s.Animals.Count)
-                                               .FirstOrDefault();
-
-            return View(stallWithMostAnimals);
+            return View();
         }
 
         public IActionResult Privacy()
