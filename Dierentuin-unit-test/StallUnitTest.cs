@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
+using Dierentuin_App.Services;
 
 namespace Dierentuin_unit_test
 {
@@ -28,7 +29,8 @@ namespace Dierentuin_unit_test
             var options = GetDbContextOptions();
             using (var context = new Dierentuin_AppContext(options))
             {
-                var controller = new StallsController(context, Mock.Of<ILogger<StallsController>>());
+                var mockDayNightService = new Mock<DayNightService>();
+                var controller = new StallsController(context, mockDayNightService.Object);
                 var newStall = new Stall
                 {
                     Id = 1,
@@ -55,6 +57,7 @@ namespace Dierentuin_unit_test
             var options = GetDbContextOptions();
             using (var context = new Dierentuin_AppContext(options))
             {
+                var mockDayNightService = new Mock<DayNightService>();
                 var existingStall = new Stall
                 {
                     Id = 1,
@@ -67,11 +70,8 @@ namespace Dierentuin_unit_test
                 context.Stall.Add(existingStall);
                 context.SaveChanges();
 
-                // Create a mock logger
-                var mockLogger = Mock.Of<ILogger<StallsController>>();
-
-                // Initialize controller with context and mocked logger
-                var controller = new StallsController(context, mockLogger);
+                // Initialize controller with context
+                var controller = new StallsController(context, mockDayNightService.Object);
 
                 existingStall.Name = "Updated Stall";
 
@@ -93,6 +93,7 @@ namespace Dierentuin_unit_test
             var options = GetDbContextOptions();
             using (var context = new Dierentuin_AppContext(options))
             {
+                var mockDayNightService = new Mock<DayNightService>();
                 var existingStall = new Stall
                 {
                     Id = 1,
@@ -105,7 +106,7 @@ namespace Dierentuin_unit_test
                 context.Stall.Add(existingStall);
                 context.SaveChanges();
 
-                var controller = new StallsController(context, Mock.Of<ILogger<StallsController>>());
+                var controller = new StallsController(context, mockDayNightService.Object);
 
                 // Act
                 var result = await controller.DeleteConfirmed(existingStall.Id);

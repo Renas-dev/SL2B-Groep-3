@@ -10,18 +10,18 @@
 }
 
 [data-theme="day"] {
-    --color-bg: #87cefa;
-    --stall-bg: white;
+  --color-bg: #87cefa;
+  --stall-bg: white;
 }
 
 body {
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    transition: background-color 0.5s ease, color 0.5s ease;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: background-color 0.5s ease, color 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
 }
 
 html {
@@ -49,115 +49,127 @@ body > div {
 }
 /* Custom footer styles */
 .footer-custom {
-    background-color: #222;
-    color: #fff;
-    padding: 10px 0;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background-color: #222;
+  color: #fff;
+  padding: 10px 0;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-    /* Container for footer content */
-    .footer-custom .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    /* Footer sections */
-    .footer-custom .footer-section-left,
-    .footer-custom .footer-section-center,
-    .footer-custom .footer-section-right {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    /* Adjust alignment for sections */
-    .footer-custom .footer-section-left {
-        text-align: left;
-        justify-content: flex-start;
-    }
-    /* Adjust alignment for sections */
-    .footer-custom .footer-section-center {
-        text-align: center;
-    }
-    /* Adjust alignment for sections */
-    .footer-custom .footer-section-right {
-        display: flex;
-        justify-content: flex-end;
-    }
+/* Container for footer content */
+.footer-custom .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+/* Footer sections */
+.footer-custom .footer-section-left,
+.footer-custom .footer-section-center,
+.footer-custom .footer-section-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Adjust alignment for sections */
+.footer-custom .footer-section-left {
+  text-align: left;
+  justify-content: flex-start;
+}
+/* Adjust alignment for sections */
+.footer-custom .footer-section-center {
+  text-align: center;
+}
+/* Adjust alignment for sections */
+.footer-custom .footer-section-right {
+  display: flex;
+  justify-content: flex-end;
+}
 
-    /* Adjusted grid container */
-    .footer-custom .grid-container {
-        display: grid;
-        grid-template-columns: repeat(2, 150px); /* Set fixed width for columns */
-        gap: 10px 30px; /* Adjust gap between items */
-        text-align: left;
-    }
+/* Adjusted grid container */
+.footer-custom .grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 150px); /* Set fixed width for columns */
+  gap: 10px 30px; /* Adjust gap between items */
+  text-align: left;
+}
 
-    /* Grid item styling */
-    .footer-custom .grid-item {
-        display: flex;
-        align-items: center;
-        background-color: transparent; /* Remove yellow background */
-        width: 150px; /* Set fixed width for items */
-    }
+/* Grid item styling */
+.footer-custom .grid-item {
+  display: flex;
+  align-items: center;
+  background-color: transparent; /* Remove yellow background */
+  width: 150px; /* Set fixed width for items */
+}
 
-    /* Stall styling */
-    .stall-container {
-        width: calc(@Model.Size * 40px); /* Initial width based on stall size */
-        background-color: var(--stall-bg);
-        border: 1px solid #ccc;
-        margin-top: 20px;
-        padding: 10px;
-        box-sizing: border-box; /* Include padding in width calculation */
-        transition: width 0.3s ease-in-out; /* Smooth transition for width changes */
-    }
+/* Stall styling */
+.stall-container {
+  width: calc(@Model.Size * 40px); /* Initial width based on stall size */
+  background-color: var(--stall-bg);
+  border: 1px solid #ccc;
+  margin-top: 20px;
+  padding: 10px;
+  box-sizing: border-box; /* Include padding in width calculation */
+  transition: width 0.3s ease-in-out; /* Smooth transition for width changes */
+}
 
-    .animal-item {
-        margin-bottom: 10px;
-        font-size: 16px;
-    }
+.animal-item {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
 
-        /* GitHub icon styling */
-        .footer-custom .grid-item img.github-icon {
-            width: 20px;
-            height: auto;
-            margin-right: 5px;
-            vertical-align: middle;
-        }
+/* GitHub icon styling */
+.footer-custom .grid-item img.github-icon {
+  width: 20px;
+  height: auto;
+  margin-right: 5px;
+  vertical-align: middle;
+}
 
-        /* Styling for text span */
-        .footer-custom .grid-item span {
-            color: #ff9800;
-            margin-right: 5px;
-        }
+/* Styling for text span */
+.footer-custom .grid-item span {
+  color: #ff9800;
+  margin-right: 5px;
+}
 
-        /* Styling for links */
-        .footer-custom .grid-item a {
-            color: #ff9800;
-            text-decoration: none;
-        }
+/* Styling for links */
+.footer-custom .grid-item a {
+  color: #ff9800;
+  text-decoration: none;
+}
 
-            .footer-custom .grid-item a:hover {
-                text-decoration: underline;
-            }
+.footer-custom .grid-item a:hover {
+  text-decoration: underline;
+}
+
+.diurnal-day {
+    color: green;
+}
+
+.nocturnal-night {
+    color: green;
+}
+
+.title-home {
+    margin-bottom: 5rem;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .footer-custom .container {
-        flex-direction: column; /* Stack sections vertically */
-        text-align: center; /* Center text for all sections */
-    }
-    
-    .footer-custom .grid-container {
-        grid-template-columns: 1fr; /* Single column layout for smaller screens */
-        justify-items: center; /* Center items horizontally */
-    }
+  .footer-custom .container {
+    flex-direction: column; /* Stack sections vertically */
+    text-align: center; /* Center text for all sections */
+  }
 
-    .footer-custom .grid-item {
-        width: auto; /* Auto width for items on small screens */
-    }
+  .footer-custom .grid-container {
+    grid-template-columns: 1fr; /* Single column layout for smaller screens */
+    justify-items: center; /* Center items horizontally */
+  }
+
+  .footer-custom .grid-item {
+    width: auto; /* Auto width for items on small screens */
+  }
 }

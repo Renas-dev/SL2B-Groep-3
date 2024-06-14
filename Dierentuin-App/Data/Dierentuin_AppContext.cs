@@ -27,7 +27,7 @@ namespace Dierentuin_App.Data
                 if (!Stall.Any())
                 {
                     Console.WriteLine("No stalls found. Seeding database with stalls...");
-                    var stalls = GenerateStalls(2);
+                    var stalls = GenerateStalls(4);
                     Stall.AddRange(stalls);
                     SaveChanges();
                     Console.WriteLine("Stalls seeded successfully.");
@@ -41,7 +41,7 @@ namespace Dierentuin_App.Data
                 if (!Animal.Any())
                 {
                     Console.WriteLine("No animals found. Seeding database with animals...");
-                    var animals = GenerateAnimals(10);
+                    var animals = GenerateAnimals(20);
                     Animal.AddRange(animals);
                     SaveChanges();
                     Console.WriteLine("Animals seeded successfully.");
