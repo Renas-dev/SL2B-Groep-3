@@ -51,14 +51,13 @@ namespace Dierentuin_App.Controllers
             }
 
             // Number of items per page
-            int pageSize = 3;
+            int pageSize = 25;
             // Current page number (default is 1)
             int pageNumber = (page ?? 1);
 
             // Execute query and return paged list to view
             var pagedList = await animals.ToPagedListAsync(pageNumber, pageSize);
             return View(pagedList);
-
         }
 
         // GET: Animals/Details/5

@@ -8,14 +8,20 @@ namespace Dierentuin_App.Models
     {
         [Key] // Primary Key
         public int Id { get; set; }
+        [Required(ErrorMessage = "Name is required")]
         public string? Name { get; set; }
+        [Required(ErrorMessage = "Species is required")]
         public string? Species { get; set; }
+        [Required(ErrorMessage = "Category is required")]
         public string? Category { get; set; }
         public AnimalSize Size { get; set; }
         public AnimalDietaryClass DietaryClass { get; set; }
         public AnimalActivityPattern ActivityPattern { get; set; }
+        [Required(ErrorMessage = "Prey is required")]
         public string? Prey { get; set; }
+        [Required(ErrorMessage = "Enclosure is required")]
         public string? Enclosure { get; set; }
+        [Required(ErrorMessage = "Space requirment is required")]
         public double SpaceRequirement { get; set; }
         public AnimalSecurityRequirement SecurityRequirement { get; set; }
 

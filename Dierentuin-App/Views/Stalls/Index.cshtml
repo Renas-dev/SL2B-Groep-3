@@ -1,8 +1,8 @@
-﻿@model IEnumerable<Dierentuin_App.Models.Stall>
+﻿﻿@using X.PagedList.Mvc.Core
+@using X.PagedList
+@using Microsoft.AspNetCore.Http
 
-@{
-    ViewData["Title"] = "Index";
-}
+@model X.PagedList.IPagedList<Dierentuin_App.Models.Stall>
 
 <div class="row mt-3">
     <div class="col-12 d-flex justify-content-between align-items-center">
@@ -29,7 +29,7 @@
                     <div class="col-12">
                         <div class="col-12">
                             <div class="input-group">
-                                <input type="text" name="searchString" placeholder="Search by name..." class="form-control" />
+                                <input type="text" name="searchString" placeholder="Search by name/climate/habitat..." class="form-control" />
                                 <span class="input-group-text">
                                     <i class="bi bi-search"></i>
                                 </span>
@@ -113,7 +113,7 @@
                 </select>
             </div>
             <div class="col-md-6 mt-3 order-md-first">
-                <input type="text" name="searchString" placeholder="Search by name..." class="form-control" />
+                <input type="text" name="searchString" placeholder="Search by name/climate/habitat..." class="form-control" />
             </div>
             <div class="col-md-3 mt-3 order-md-first">
                 <input type="submit" value="Search" class="btn btn-dark w-100" />
@@ -131,11 +131,11 @@
             <table class="table table-striped table-hover table-bordered">
                 <thead>
                     <tr class="table-dark">
-                        <th>@Html.DisplayNameFor(model => model.Name)</th>
-                        <th>@Html.DisplayNameFor(model => model.Climate)</th>
-                        <th>@Html.DisplayNameFor(model => model.HabitatType)</th>
-                        <th>@Html.DisplayNameFor(model => model.SecurityLevel)</th>
-                        <th>@Html.DisplayNameFor(model => model.Size)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Climate)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().HabitatType)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().SecurityLevel)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Size)</th>
                         <th class="d-flex justify-content-center">Actions</th>
                     </tr>
                 </thead>
@@ -163,3 +163,61 @@
         </div>
     </div>
 </div>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-end">
+        @* Previous Page Link *@
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new
+                {
+                    page = Model.PageNumber - 1,
+                    searchString = ViewContext.HttpContext.Request.Query["searchString"],
+                    Climate = ViewContext.HttpContext.Request.Query["size"],
+                    HabitatType = ViewContext.HttpContext.Request.Query["dietaryClass"],
+                })">Previous</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+        }
+
+        @* Numeric Page Links *@
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Index", new
+                {
+                    page = i,
+                    searchString = ViewContext.HttpContext.Request.Query["searchString"],
+                    Climate = ViewContext.HttpContext.Request.Query["Climate"],
+                    HabitatType = ViewContext.HttpContext.Request.Query["HabitatType"],
+                })">@i</a>
+            </li>
+        }
+
+        @* Next Page Link *@
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new
+                {
+                    page = Model.PageNumber + 1,
+                    searchString = ViewContext.HttpContext.Request.Query["searchString"],
+                    Climate = ViewContext.HttpContext.Request.Query["Climate"],
+                    HabitatType = ViewContext.HttpContext.Request.Query["HabitatType"],
+                })">Next</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+        }
+    </ul>
+</nav>
