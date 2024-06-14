@@ -13,13 +13,11 @@ namespace Dierentuin_App.Controllers
     {
         private readonly DayNightService _dayNightService;
         private readonly Dierentuin_AppContext _context;
-        private readonly ILogger<StallsController> _logger;
 
-        public StallsController(Dierentuin_AppContext context, DayNightService dayNightService, ILogger<StallsController> logger)
+        public StallsController(Dierentuin_AppContext context, DayNightService dayNightService)
         {
             _context = context;
             _dayNightService = dayNightService;
-            _logger = logger;
         }
 
         // GET: Stalls/Index
@@ -112,13 +110,6 @@ namespace Dierentuin_App.Controllers
                 _context.Add(stall);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
-
-            // Log the model state errors
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors)
-            {
-                _logger.LogError(error.ErrorMessage);
             }
 
             return View(stall);
