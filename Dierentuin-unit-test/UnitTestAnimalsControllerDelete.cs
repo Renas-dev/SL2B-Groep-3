@@ -34,7 +34,7 @@ namespace Dierentuin_unit_test
                 // Arrange: Add a test animal to the in-memory database
                 context.Animal.Add(new Animal
                 {
-                    Id = 1,
+                    Id = 2,
                     Name = "Tiger",
                     Species = "Panthera tigris",
                     Category = "Mammal",
@@ -52,7 +52,7 @@ namespace Dierentuin_unit_test
                 _controller = new AnimalsController(context);
 
                 // Act: Attempt to delete the test animal
-                var result = await _controller.DeleteConfirmed(1) as RedirectToActionResult;
+                var result = await _controller.DeleteConfirmed(2) as RedirectToActionResult;
 
                 // Assert: Verify that the action redirects to the Index page
                 Assert.NotNull(result);
