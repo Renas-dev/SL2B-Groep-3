@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Dierentuin_App.Data;
 using Dierentuin_App.Models;
+using X.PagedList;
 
 namespace Dierentuin_App.Controllers
 {
@@ -22,7 +23,7 @@ namespace Dierentuin_App.Controllers
 
         // GET: Stalls/Index
         [HttpGet]
-        public async Task<IActionResult> Index(string searchString, string climate, string habitatType, string securityLevel)
+        public async Task<IActionResult> Index(string searchString, string climate, string habitatType, string securityLevel, int? page)
         {
             // Use IQueryable to build query dynamically
             var stalls = _context.Stall.AsQueryable();
@@ -30,10 +31,12 @@ namespace Dierentuin_App.Controllers
             // Apply filters based on parameters
             if (!string.IsNullOrEmpty(searchString))
             {
+                var lowerSearchString = searchString.ToLower();
                 stalls = stalls.Where(s =>
-                    s.Name.Contains(searchString) ||
-                    s.Climate.Contains(searchString) ||
-                    s.HabitatType.Contains(searchString));
+                    (s.Name != null && s.Name.ToLower().Contains(lowerSearchString)) ||
+                    (s.Climate != null && s.Climate.ToLower().Contains(lowerSearchString)) ||
+                    (s.HabitatType != null && s.HabitatType.ToLower().Contains(lowerSearchString))
+                );
             }
 
             if (!string.IsNullOrEmpty(climate))
@@ -51,7 +54,14 @@ namespace Dierentuin_App.Controllers
                 stalls = stalls.Where(s => s.SecurityLevel == securityLevel);
             }
 
-            return View(await stalls.ToListAsync());
+            // Number of items per page
+            int pageSize = 10;
+            // Current page number (default is 1)
+            int pageNumber = (page ?? 1);
+
+            // Execute query and return paged list to view
+            var pagedList = await stalls.ToPagedListAsync(pageNumber, pageSize);
+            return View(pagedList);
         }
 
         // POST: Stalls/Index
