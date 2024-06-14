@@ -28,7 +28,7 @@ namespace Dierentuin_unit_test
             var options = GetDbContextOptions();
             using (var context = new Dierentuin_AppContext(options))
             {
-                var controller = new StallsController(context, Mock.Of<ILogger<StallsController>>());
+                var controller = new StallsController(context);
                 var newStall = new Stall
                 {
                     Id = 1,
@@ -67,11 +67,8 @@ namespace Dierentuin_unit_test
                 context.Stall.Add(existingStall);
                 context.SaveChanges();
 
-                // Create a mock logger
-                var mockLogger = Mock.Of<ILogger<StallsController>>();
-
-                // Initialize controller with context and mocked logger
-                var controller = new StallsController(context, mockLogger);
+                // Initialize controller with context
+                var controller = new StallsController(context);
 
                 existingStall.Name = "Updated Stall";
 
@@ -105,7 +102,7 @@ namespace Dierentuin_unit_test
                 context.Stall.Add(existingStall);
                 context.SaveChanges();
 
-                var controller = new StallsController(context, Mock.Of<ILogger<StallsController>>());
+                var controller = new StallsController(context);
 
                 // Act
                 var result = await controller.DeleteConfirmed(existingStall.Id);
