@@ -27,14 +27,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: "Build and Push Docker Image"
+      - name: "Build Docker Image"
         uses: docker/build-push-action@v3
         with:
           context: .
           file: ./Dockerfile
-          push: true
+          push: false  # Only build, do not push yet
           tags: renyas/yourimagename:latest
           platforms: linux/arm64
+
+      - name: "Push Docker Image to Docker Hub"
+        run: |
+          docker push renyas/yourimagename:latest
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: "Download and Set up kubectl"
         run: |
