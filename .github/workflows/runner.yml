@@ -1,18 +1,20 @@
 name: CI
 
-# Event triggers
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
-  build:
+  checkout:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
+  setup-docker:
+    runs-on: ubuntu-latest
+    steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -25,6 +27,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
@@ -34,20 +39,28 @@ jobs:
           tags: renyas/yourimagename:latest
           platforms: linux/arm64
 
+  setup-kubectl:
+    runs-on: ubuntu-latest
+    steps:
       - name: Set up kubectl
         run: |
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
+
       - name: Create .kube directory
         run: mkdir -p $HOME/.kube
 
       - name: Set up KUBECONFIG
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
           kubectl rollout status deployment/group03 -n group03
+
       - name: Restart Deployment
         run: kubectl rollout restart deployment/group03 -n group03
