@@ -6,7 +6,7 @@ WORKDIR /src
 
 # Copy and build Dierentuin-App
 COPY ["Dierentuin-App/Dierentuin-App.csproj", "Dierentuin-App/"]
-RUN dotnet restore "Dierentuin-App/Dierentuin-App.csproj"
+RUN dotnet restore "/src/Dierentuin-App/Dierentuin-App.csproj"
 COPY Dierentuin-App/ Dierentuin-App/
 WORKDIR "/src/Dierentuin-App"
 RUN dotnet build "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/build
@@ -19,7 +19,7 @@ WORKDIR /src
 
 # Copy and test Dierentuin-unit-test
 COPY ["Dierentuin-unit-test/Dierentuin-unit-test.csproj", "Dierentuin-unit-test/"]
-RUN dotnet restore "Dierentuin-unit-test/Dierentuin-unit-test.csproj"
+RUN dotnet restore "/src/Dierentuin-unit-test/Dierentuin-unit-test.csproj"
 COPY Dierentuin-unit-test/ Dierentuin-unit-test/
 WORKDIR "/src/Dierentuin-unit-test"
 RUN dotnet test --logger:trx
