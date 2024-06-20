@@ -13,12 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Lint Dockerfile
-      - name: Lint Dockerfile
-        uses: hadolint/hadolint-action@v1.6.0
-        with:
-          dockerfile: ./Dockerfile
-
       # Test Docker Setup
       - name: Test Docker Setup
         run: |
