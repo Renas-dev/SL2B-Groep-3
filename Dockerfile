@@ -19,7 +19,7 @@ WORKDIR /src
 
 # Copy and test Dierentuin-unit-test
 COPY ["Dierentuin-unit-test/Dierentuin-unit-test.csproj", "Dierentuin-unit-test/"]
-RUN dotnet restore "/src/Dierentuin-unit-test/Dierentuin-unit-test.csproj"
+RUN dotnet restore "Dierentuin-unit-test/Dierentuin-unit-test.csproj"
 COPY Dierentuin-unit-test/ Dierentuin-unit-test/
 WORKDIR "/src/Dierentuin-unit-test"
 RUN dotnet test --logger:trx
