@@ -30,7 +30,7 @@ WORKDIR "/src/Dierentuin-App"
 RUN dotnet publish "Dierentuin-App.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Final stage
-FROM --platform=$TARGETARCH mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
 # Set root user to install dependencies
