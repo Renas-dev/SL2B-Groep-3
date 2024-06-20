@@ -56,6 +56,37 @@ jobs:
       - name: Validate Kubernetes Configuration
         run: kubeval kubernetes-config/deploy.yaml --ignore-missing-schemas
 
+        # Added infrastructure tests
+
+# Conformance Test with Sonobuoy
+- name: Run Sonobuoy for Conformance Testing
+  run: |
+    sonobuoy run --mode=certified-conformance
+    sonobuoy status
+    results=$(sonobuoy retrieve)
+    sonobuoy results $results
+
+  # Load Testing with K6
+  - name: Install K6
+    run: |
+      sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 379CE192D401AB61
+      echo "deb https://dl.bintray.com/loadimpact/deb stable main" | sudo tee -a /etc/apt/sources.list
+      sudo apt-get update
+      sudo apt-get install k6
+  - name: Run Load Testing
+    run: k6 run scripts/load-test.js
+
+  # Security Scanning with Trivy
+  - name: Install Trivy
+    run: |
+      curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+  - name: Scan Kubernetes Configurations for Vulnerabilities
+    run: trivy config kubernetes-config/
+  - name: Scan Container Images for Vulnerabilities
+    run: |
+      # Assuming your Docker images are listed in a file or can be dynamically retrieved
+      cat docker_images_list.txt | xargs -I {} trivy image {}
+
     # Deploy to Kubernetes
       - name: Deploy to Kubernetes
         run: |
