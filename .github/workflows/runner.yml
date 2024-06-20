@@ -34,24 +34,7 @@ jobs:
           tags: renyas/yourimagename:latest
           platforms: linux/arm64
 
-      # Kubeval interface test
-      - name: Install Kubeval
-        run: |
-          curl -sL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar zx
-          sudo cp kubeval /usr/local/bin
-
-      - name: Validate Kubernetes Configuration
-        run: kubeval kubernetes-config/deploy.yaml --ignore-missing-schemas
-
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f kubernetes-config/deploy.yaml
-          kubectl rollout status deployment/group03 -n group03
-
-      - name: Restart Deployment
-        run: kubectl rollout restart deployment/group03 -n group03
-
-      # Kubectl deployment
+       # Set up kubectl
       - name: Set up kubectl
         run: |
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -64,6 +47,16 @@ jobs:
       - name: Set up KUBECONFIG
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
+      # Kubeval interface test
+      - name: Install Kubeval
+        run: |
+          curl -sL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar zx
+          sudo cp kubeval /usr/local/bin
+
+      - name: Validate Kubernetes Configuration
+        run: kubeval kubernetes-config/deploy.yaml --ignore-missing-schemas
+
+    # Deploy to Kubernetes
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
