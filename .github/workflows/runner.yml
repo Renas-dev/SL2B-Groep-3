@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_validate:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -53,33 +53,17 @@ jobs:
       - name: Validate Kubernetes Configuration
         run: kubeval kubernetes-config/deploy.yaml --ignore-missing-schemas
 
-  infrastructure_tests:
-    runs-on: ubuntu-latest
-
-    needs: build_and_validate
-
-    steps:
-      - uses: actions/checkout@v3
-
-      # Infrastructure Test 1 - Check Kubernetes Nodes
+      # Infrastructure Test 1 - Check nodes
       - name: Infrastructure Test - Check Kubernetes Nodes
         run: kubectl get nodes
 
-      # Infrastructure Test 2 - Check Kubernetes Pods
+      # Infrastructure Test 2 - Check pods
       - name: Infrastructure Test - Check Kubernetes Pods
         run: kubectl get pods --all-namespaces
 
-      # Infrastructure Test 3 - Check Kubernetes Services
+      # Infrastructure Test 3 - Check services
       - name: Infrastructure Test - Check Kubernetes Services
         run: kubectl get services --all-namespaces
-
-  deploy_to_kubernetes:
-    runs-on: ubuntu-latest
-
-    needs: infrastructure_tests
-
-    steps:
-      - uses: actions/checkout@v3
 
       - name: Deploy to Kubernetes
         run: |
