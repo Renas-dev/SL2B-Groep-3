@@ -61,6 +61,10 @@ jobs:
       - name: Infrastructure Test - Check Kubernetes Pods
         run: kubectl get pods --all-namespaces
 
+      # Infrastructure Test 3 - Check services
+      - name: Infrastructure Test - Check Kubernetes Services
+        run: kubectl get services --all-namespaces
+
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
