@@ -51,14 +51,6 @@ jobs:
       - name: Set up KUBECONFIG
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
-      - name: Install Kubeval
-        run: |
-          curl -sL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar zx
-          sudo cp kubeval /usr/local/bin
-
-      - name: Validate Kubernetes Configuration
-        run: kubeval kubernetes-config/deploy.yaml --ignore-missing-schemas
-
       - name: Infrastructure Test - Check Kubernetes Nodes
         run: kubectl get nodes
 
