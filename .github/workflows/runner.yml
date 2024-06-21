@@ -100,7 +100,7 @@ jobs:
         run: kubectl apply -f kubernetes-config/grafana-service.yaml
 
       - name: Deploy Grafana Ingress
-        run: kubectl apply -f kubernetes-config /grafana-ingress.yaml
+        run: kubectl apply -f kubernetes-config/grafana-ingress.yaml
 
       - name: Check Grafana Deployment Status
         run: kubectl rollout status deployment/grafana -n grafana
