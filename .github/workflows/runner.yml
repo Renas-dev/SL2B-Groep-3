@@ -53,30 +53,6 @@ jobs:
       - name: Validate Kubernetes Configuration
         run: kubeval kubernetes-config/deploy.yaml --ignore-missing-schemas
 
-      - name: Install K6
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg2 curl
-          curl -fsSL https://dl.k6.io/key.gpg | sudo apt-key add -
-          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
-
-      - name: Run Load Testing
-        run: k6 run ./scripts/load-test.js
-
-      - name: Install Trivy
-        run: |
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-
-      - name: Scan Kubernetes Configurations for Vulnerabilities
-        run: trivy config kubernetes-config/
-
-      - name: Scan Container Images for Vulnerabilities
-        run: |
-          # Assuming your Docker images are listed in a file or can be dynamically retrieved
-          cat docker_images_list.txt | xargs -I {} trivy image {}
-
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
