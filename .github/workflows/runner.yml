@@ -89,6 +89,10 @@ jobs:
         run: kubectl rollout restart deployment/group03 -n group03
 
       # Additional steps to deploy Grafana
+      - name: Create Grafana Namespace
+        run: |
+          kubectl create namespace grafana || true
+
       - name: Deploy Grafana Deployment
         run: kubectl apply -f kubernetes-config/grafana-deployment.yaml
 
@@ -96,7 +100,7 @@ jobs:
         run: kubectl apply -f kubernetes-config/grafana-service.yaml
 
       - name: Deploy Grafana Ingress
-        run: kubectl apply -f kubernetes-config/grafana-ingress.yaml
+        run: kubectl apply -f kubernetes-config /grafana-ingress.yaml
 
       - name: Check Grafana Deployment Status
         run: kubectl rollout status deployment/grafana -n grafana
