@@ -60,6 +60,10 @@ jobs:
           chmod +x sonobuoy
           sudo mv sonobuoy /usr/local/bin/
 
+      - name: Delete existing Sonobuoy namespace (if exists)
+        run: |
+          kubectl delete namespace sonobuoy || true
+
       - name: Run Sonobuoy for Conformance Testing
         run: |
           sonobuoy run --mode=certified-conformance
