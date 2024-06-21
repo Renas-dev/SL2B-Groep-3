@@ -3,7 +3,7 @@ name: CI
 # Event triggers
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -52,4 +52,18 @@ jobs:
           kubectl rollout status deployment/group03 -n group03
 
       - name: Restart Deployment
-        run: kubectl rollout restart deployment/group03 -n group03
+        run:
+          kubectl rollout restart deployment/group03 -n group03
+
+          # Additional steps to deploy Grafana
+      - name: Deploy Grafana Deployment
+        run: kubectl apply -f deployment/grafana-deployment.yaml
+
+      - name: Deploy Grafana Service
+        run: kubectl apply -f deployment/grafana-service.yaml
+
+      - name: Deploy Grafana Ingress
+        run: kubectl apply -f deployment/grafana-ingress.yaml
+
+      - name: Check Grafana Deployment Status
+        run: kubectl rollout status deployment/grafana -n grafana
