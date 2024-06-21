@@ -4,6 +4,7 @@ metadata:
   name: grafana
   namespace: grafana
 spec:
+  progressDeadlineSeconds: 600  # Increase the progress deadline
   replicas: 1
   selector:
     matchLabels:
