@@ -88,7 +88,7 @@ jobs:
       - name: Restart Deployment
         run: kubectl rollout restart deployment/group03 -n group03
 
-      # Additional steps to deploy Grafana
+      # Additional steps to deploy Grafana.
       - name: Create Grafana Namespace
         run: |
           kubectl create namespace grafana || true
