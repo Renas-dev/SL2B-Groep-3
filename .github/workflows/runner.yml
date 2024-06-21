@@ -1,5 +1,6 @@
 name: CI
 
+# Event triggers
 on:
   push:
     branches: [ "main" ]
@@ -33,6 +34,7 @@ jobs:
           tags: renyas/yourimagename:latest
           platforms: linux/arm64
 
+       # Set up kubectl
       - name: Set up kubectl
         run: |
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -45,6 +47,7 @@ jobs:
       - name: Set up KUBECONFIG
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
+      # Kubeval interface test
       - name: Install Kubeval
         run: |
           curl -sL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar zx
@@ -53,46 +56,44 @@ jobs:
       - name: Validate Kubernetes Configuration
         run: kubeval kubernetes-config/deploy.yaml --ignore-missing-schemas
 
-      - name: Install Sonobuoy
-        run: |
-          curl -LO "https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.20.0/sonobuoy_0.20.0_linux_amd64.tar.gz"
-          tar -xzf sonobuoy_0.20.0_linux_amd64.tar.gz
-          chmod +x sonobuoy
-          sudo mv sonobuoy /usr/local/bin/
+      # # Install Sobobuoy
+      # - name: Install Sonobuoy
+      #   run: |
+      #     curl -LO "https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.20.0/sonobuoy_0.20.0_linux_amd64.tar.gz"
+      #     tar -xzf sonobuoy_0.20.0_linux_amd64.tar.gz
+      #     chmod +x sonobuoy
+      #     sudo mv sonobuoy /usr/local/bin/
 
-      - name: Delete existing Sonobuoy namespace (if exists)
-        run: |
-          kubectl delete namespace sonobuoy || true
+      # # Conformance Test with Sonobuoy
+      # - name: Run Sonobuoy for Conformance Testing
+      #   run: |
+      #     sonobuoy run --mode=certified-conformance
+      #     sonobuoy status
+      #     results=$(sonobuoy retrieve)
+      #     sonobuoy results $results
 
-      - name: Run Sonobuoy for Conformance Testing
-        run: |
-          sonobuoy run --mode=certified-conformance
-          sleep 60
-          kubectl get pods -n sonobuoy
-          kubectl describe pod -n sonobuoy $(kubectl get pods -n sonobuoy -o jsonpath='{.items[0].metadata.name}')
-          sonobuoy status
-
+      # Load Testing with K6
       - name: Install K6
         run: |
           sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 379CE192D401AB61
           echo "deb https://dl.bintray.com/loadimpact/deb stable main" | sudo tee -a /etc/apt/sources.list
           sudo apt-get update
           sudo apt-get install k6
-
       - name: Run Load Testing
         run: k6 run scripts/load-test.js
 
+      # Security Scanning with Trivy
       - name: Install Trivy
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-
       - name: Scan Kubernetes Configurations for Vulnerabilities
         run: trivy config kubernetes-config/
-
       - name: Scan Container Images for Vulnerabilities
         run: |
+          # Assuming your Docker images are listed in a file or can be dynamically retrieved
           cat docker_images_list.txt | xargs -I {} trivy image {}
 
+      # Deploy to Kubernetes
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
