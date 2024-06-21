@@ -53,6 +53,14 @@ jobs:
       - name: Validate Kubernetes Configuration
         run: kubeval kubernetes-config/deploy.yaml --ignore-missing-schemas
 
+      # Infrastructure Test 1 - Check nodes
+      - name: Infrastructure Test - Check Kubernetes Nodes
+        run: kubectl get nodes
+
+      # Infrastructure Test 2 - Check pods
+      - name: Infrastructure Test - Check Kubernetes Pods
+        run: kubectl get pods --all-namespaces
+
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
