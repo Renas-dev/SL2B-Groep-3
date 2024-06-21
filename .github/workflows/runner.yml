@@ -34,7 +34,14 @@ jobs:
           tags: renyas/yourimagename:latest
           platforms: linux/arm64
 
-      - name: Set up kubectl
+  validate_and_tests:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup kubectl
         run: |
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
@@ -46,16 +53,47 @@ jobs:
       - name: Set up KUBECONFIG
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
+      - name: Infrastructure Test - Check Kubernetes Nodes
+        run: kubectl get nodes
+
+      - name: Infrastructure Test - Check Kubernetes Pods
+        run: kubectl get pods --all-namespaces
+
+      - name: Infrastructure Test - Check Kubernetes Services
+        run: kubectl get services --all-namespaces
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: validate_and_tests
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl
+
+      - name: Set up KUBECONFIG
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+        
+
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
           kubectl rollout status deployment/group03 -n group03
 
       - name: Restart Deployment
+
         run:
           kubectl rollout restart deployment/group03 -n group03
 
-          # Additional steps to deploy Grafana
+        run: kubectl rollout restart deployment/group03 -n group03
+
+       # Additional steps to deploy Grafana
       - name: Deploy Grafana Deployment
         run: kubectl apply -f deployment/grafana-deployment.yaml
 
