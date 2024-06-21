@@ -79,7 +79,6 @@ jobs:
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-        
 
       - name: Deploy to Kubernetes
         run: |
@@ -87,13 +86,9 @@ jobs:
           kubectl rollout status deployment/group03 -n group03
 
       - name: Restart Deployment
-
-        run:
-          kubectl rollout restart deployment/group03 -n group03
-
         run: kubectl rollout restart deployment/group03 -n group03
 
-       # Additional steps to deploy Grafana
+        # Additional steps to deploy Grafana
       - name: Deploy Grafana Deployment
         run: kubectl apply -f deployment/grafana-deployment.yaml
 
