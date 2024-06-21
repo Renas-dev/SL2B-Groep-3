@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -33,7 +34,12 @@ jobs:
           tags: renyas/yourimagename:latest
           platforms: linux/arm64
 
-      - name: Set up kubectl
+  validate_and_tests:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Setup kubectl
         run: |
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
@@ -53,18 +59,20 @@ jobs:
       - name: Validate Kubernetes Configuration
         run: kubeval kubernetes-config/deploy.yaml --ignore-missing-schemas
 
-      # Infrastructure Test 1 - Check nodes
       - name: Infrastructure Test - Check Kubernetes Nodes
         run: kubectl get nodes
 
-      # Infrastructure Test 2 - Check pods
       - name: Infrastructure Test - Check Kubernetes Pods
         run: kubectl get pods --all-namespaces
 
-      # Infrastructure Test 3 - Check services
       - name: Infrastructure Test - Check Kubernetes Services
         run: kubectl get services --all-namespaces
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: validate_and_tests
+
+    steps:
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
