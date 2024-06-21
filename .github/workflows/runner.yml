@@ -53,31 +53,6 @@ jobs:
       - name: Validate Kubernetes Configuration
         run: kubeval kubernetes-config/deploy.yaml --ignore-missing-schemas
 
-      # - name: Install Sonobuoy
-      #   run: |
-      #     curl -LO "https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.20.0/sonobuoy_0.20.0_linux_amd64.tar.gz"
-      #     tar -xzf sonobuoy_0.20.0_linux_amd64.tar.gz
-      #     chmod +x sonobuoy
-      #     sudo mv sonobuoy /usr/local/bin/
-
-      # - name: Delete existing Sonobuoy namespace (if exists)
-      #   run: |
-      #     kubectl delete all --all -n sonobuoy --grace-period=0 --force || true
-      #     kubectl delete pvc --all -n sonobuoy --grace-period=0 --force || true
-      #     kubectl delete configmap --all -n sonobuoy --grace-period=0 --force || true
-      #     kubectl delete secret --all -n sonobuoy --grace-period=0 --force || true
-      #     kubectl delete service --all -n sonobuoy --grace-period=0 --force || true
-      #     kubectl get namespace sonobuoy -o json | jq '.spec.finalizers = []' | kubectl replace --raw "/api/v1/namespaces/sonobuoy/finalize" -f - || true
-      #     kubectl delete namespace sonobuoy || true
-
-      # - name: Run Sonobuoy for Conformance Testing
-      #   run: |
-      #     sonobuoy run --mode=certified-conformance
-      #     sleep 60
-      #     kubectl get pods -n sonobuoy
-      #     kubectl describe pod -n sonobuoy $(kubectl get pods -n sonobuoy -o jsonpath='{.items[0].metadata.name}')
-      #     sonobuoy status
-
       - name: Install K6
         run: |
           sudo apt-get update
@@ -88,7 +63,7 @@ jobs:
           sudo apt-get install -y k6
 
       - name: Run Load Testing
-        run: k6 run scripts/load-test.js
+        run: k6 run ./scripts/load-test.js
 
       - name: Install Trivy
         run: |
@@ -99,6 +74,7 @@ jobs:
 
       - name: Scan Container Images for Vulnerabilities
         run: |
+          # Assuming your Docker images are listed in a file or can be dynamically retrieved
           cat docker_images_list.txt | xargs -I {} trivy image {}
 
       - name: Deploy to Kubernetes
