@@ -3,7 +3,7 @@ name: CI
 # Event triggers
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -77,10 +77,27 @@ jobs:
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-        
+
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
           kubectl rollout status deployment/group03 -n group03
       - name: Restart Deployment
-        run: kubectl rollout restart deployment/group03 -n group03
+        run:
+          kubectl rollout restart deployment/group03 -n group03
+
+      # Additional steps to deploy Grafana.
+    - name: Create Grafana Namespace
+      run: kubectl create namespace grafana || true
+
+    - name: Deploy Grafana Deployment
+      run: kubectl apply -f kubernetes-config/grafana-deployment.yaml
+
+    - name: Deploy Grafana Service
+      run: kubectl apply -f kubernetes-config/grafana-service.yaml
+
+    - name: Deploy Grafana Ingress
+      run: kubectl apply -f kubernetes-config/grafana-ingress.yaml
+
+    - name: Check Grafana Deployment Status
+      run: kubectl rollout status deployment/grafana -n grafana
