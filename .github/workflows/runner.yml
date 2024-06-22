@@ -1,9 +1,8 @@
 name: CI
 
-# Event triggers
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -34,9 +33,27 @@ jobs:
           tags: renyas/yourimagename:latest
           platforms: linux/arm64
 
-  validate_and_tests:
+  codeql-analysis:
     runs-on: ubuntu-latest
     needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: csharp
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  validate_and_tests:
+    runs-on: ubuntu-latest
+    needs: [build, codeql-analysis]
 
     steps:
       - uses: actions/checkout@v3
@@ -87,20 +104,3 @@ jobs:
 
       - name: Restart Deployment
         run: kubectl rollout restart deployment/group03 -n group03
-
-      # Additional steps to deploy Grafana.
-      - name: Create Grafana Namespace
-        run: |
-          kubectl create namespace grafana || true
-
-      - name: Deploy Grafana Deployment
-        run: kubectl apply -f kubernetes-config/grafana-deployment.yaml
-
-      - name: Deploy Grafana Service
-        run: kubectl apply -f kubernetes-config/grafana-service.yaml
-
-      - name: Deploy Grafana Ingress
-        run: kubectl apply -f kubernetes-config/grafana-ingress.yaml
-
-      - name: Check Grafana Deployment Status
-        run: kubectl rollout status deployment/grafana -n grafana
