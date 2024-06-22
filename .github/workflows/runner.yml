@@ -112,10 +112,3 @@ jobs:
 
       - name: Check Grafana Deployment Status
         run: kubectl rollout status deployment/grafana -n grafana
-      
-      # Debugging NGINX Ingress Controller deployment
-      - name: Debug NGINX Ingress Controller deployment
-        run: |
-          kubectl describe deployment/nginx-ingress-controller -n ingress-nginx
-          kubectl get pods -n ingress-nginx  # Check pods in the ingress-nginx namespace
-          kubectl get events -n ingress-nginx --sort-by='.metadata.creationTimestamp'  # Check events for the namespace
