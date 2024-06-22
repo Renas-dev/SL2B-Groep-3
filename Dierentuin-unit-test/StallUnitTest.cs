@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using Dierentuin_App.Services;
+using X.PagedList;
 
 namespace Dierentuin_unit_test
 {
@@ -116,5 +117,40 @@ namespace Dierentuin_unit_test
                 Assert.Equal(0, context.Stall.Count());
             }
         }
+
+        // Unit test Filter Stall
+        [Fact]
+        public async Task Filter_Stall()
+        {
+            // Arrange
+            var options = GetDbContextOptions();
+            using (var context = new Dierentuin_AppContext(options))
+            {
+                var mockDayNightService = new Mock<DayNightService>();
+
+                // Insert stall data to database
+                var testData = new List<Stall>
+                {
+                    new Stall { Id = 1, Name = "Stall 1", Climate = "Tropical", HabitatType = "Forest", SecurityLevel = "High", Size = 5.10 },
+                    new Stall { Id = 2, Name = "Stall 2", Climate = "Temperate", HabitatType = "Mountain", SecurityLevel = "Low", Size = 3.50 },
+                    new Stall { Id = 3, Name = "Stall 3", Climate = "Tropical", HabitatType = "Jungle", SecurityLevel = "Medium", Size = 7.20 }
+                };
+                context.Stall.AddRange(testData);
+                context.SaveChanges();
+
+                var controller = new StallsController(context, mockDayNightService.Object);
+
+                // Act
+                var result = await controller.Index(null, "Tropical", null, null, 1);
+
+                // Assert
+                var viewResult = Assert.IsType<ViewResult>(result);
+                var model = Assert.IsAssignableFrom<IPagedList<Stall>>(viewResult.Model);
+
+                // Verify stall returned filter to match the output (2 stalls match the Tropical climate filter)
+                Assert.Equal(2, model.TotalItemCount);
+            }
+        }
+
     }
 }
