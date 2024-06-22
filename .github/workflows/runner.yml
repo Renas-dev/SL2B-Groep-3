@@ -59,7 +59,7 @@ jobs:
 
       - name: Wait for NGINX Ingress Controller deployment to be ready
         run: |
-          kubectl rollout status deployment/nginx-ingress-controller -n ingress-nginx
+          kubectl wait --for=condition=available deployment/nginx-ingress-controller -n ingress-nginx --timeout=300s
 
       - name: Infrastructure Test - Check Kubernetes Nodes
         run: kubectl get nodes
@@ -119,4 +119,3 @@ jobs:
           kubectl describe deployment/nginx-ingress-controller -n ingress-nginx
           kubectl get pods -n ingress-nginx  # Check pods in the ingress-nginx namespace
           kubectl get events -n ingress-nginx --sort-by='.metadata.creationTimestamp'  # Check events for the namespace
-
