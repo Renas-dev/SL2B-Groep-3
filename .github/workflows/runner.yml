@@ -102,3 +102,19 @@ jobs:
 
       - name: Check Grafana Deployment Status
         run: kubectl rollout status deployment/grafana -n grafana
+
+  deploy_ingress_controller:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install kubectl
+        uses: steebchen/kubectl@v1
+        with:
+          version: latest
+
+      - name: Install NGINX Ingress Controller
+        run: |
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
