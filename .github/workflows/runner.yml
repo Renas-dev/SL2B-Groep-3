@@ -46,11 +46,22 @@ jobs:
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
+      
       - name: Create .kube directory
         run: mkdir -p $HOME/.kube
 
       - name: Set up KUBECONFIG
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+
+      - name: Install NGINX Ingress Controller
+        run: |
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+
+      - name: Wait for NGINX Ingress Controller deployment
+        run: |
+          kubectl wait --namespace ingress-nginx \
+            --for=condition=available deployment/nginx-ingress-controller \
+            --timeout=300s
 
       - name: Infrastructure Test - Check Kubernetes Nodes
         run: kubectl get nodes
@@ -73,6 +84,7 @@ jobs:
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
+
       - name: Set up KUBECONFIG
         run: |
           mkdir -p $HOME/.kube
@@ -102,15 +114,3 @@ jobs:
 
       - name: Check Grafana Deployment Status
         run: kubectl rollout status deployment/grafana -n grafana
-
-  deploy_ingress_controller:
-    runs-on: ubuntu-latest
-  
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-  
-      - name: Install NGINX Ingress Controller
-        run: |
-          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml --validate=false
-
