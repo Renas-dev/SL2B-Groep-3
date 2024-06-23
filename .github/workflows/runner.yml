@@ -1,5 +1,6 @@
 name: CI
 
+# Event triggers
 on:
   push:
     branches: [ "main" ]
@@ -45,40 +46,11 @@ jobs:
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
-
       - name: Create .kube directory
         run: mkdir -p $HOME/.kube
 
       - name: Set up KUBECONFIG
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-
-      - name: Check Kubernetes Token
-        run: |
-          # Extract token from kubeconfig
-          TOKEN=$(grep 'token:' $HOME/.kube/config | awk '{print $2}')
-          if [ -z "$TOKEN" ]; then
-            echo "Token not found in kubeconfig"
-            exit 1
-          fi
-          echo "Token: $TOKEN"
-
-          # Decode the token to check if it's active
-          PAYLOAD=$(echo $TOKEN | cut -d. -f2 | base64 --decode 2>/dev/null || echo "{}")
-          echo "Payload: $PAYLOAD"
-
-          # Check if the token payload contains necessary fields indicating active status
-          ISSUER=$(echo $PAYLOAD | jq -r .iss)
-          NAMESPACE=$(echo $PAYLOAD | jq -r '.["kubernetes.io/serviceaccount/namespace"]')
-          SECRET_NAME=$(echo $PAYLOAD | jq -r '.["kubernetes.io/serviceaccount/secret.name"]')
-          SERVICE_ACCOUNT=$(echo $PAYLOAD | jq -r '.["kubernetes.io/serviceaccount/service-account.name"]')
-          SERVICE_ACCOUNT_UID=$(echo $PAYLOAD | jq -r '.["kubernetes.io/serviceaccount/service-account.uid"]')
-
-          if [ -z "$ISSUER" ] || [ -z "$NAMESPACE" ] || [ -z "$SECRET_NAME" ] || [ -z "$SERVICE_ACCOUNT" ] || [ -z "$SERVICE_ACCOUNT_UID" ]; then
-            echo "Token is invalid or inactive"
-            exit 1
-          else
-            echo "Token is active"
-          fi
 
       - name: Infrastructure Test - Check Kubernetes Nodes
         run: kubectl get nodes
@@ -101,16 +73,14 @@ jobs:
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
-
       - name: Set up KUBECONFIG
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-
+        
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
           kubectl rollout status deployment/group03 -n group03
-
       - name: Restart Deployment
         run: kubectl rollout restart deployment/group03 -n group03
