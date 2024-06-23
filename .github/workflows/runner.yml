@@ -1,6 +1,5 @@
 name: CI
 
-# Event triggers
 on:
   push:
     branches: [ "main" ]
@@ -46,11 +45,33 @@ jobs:
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
+
       - name: Create .kube directory
         run: mkdir -p $HOME/.kube
 
       - name: Set up KUBECONFIG
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+
+      - name: Check Kubernetes Token Expiry
+        run: |
+          # Extract token from kubeconfig
+          TOKEN=$(grep 'token:' $HOME/.kube/config | awk '{print $2}')
+          if [ -z "$TOKEN" ]; then
+            echo "Token not found in kubeconfig"
+            exit 1
+          fi
+          # Decode the token to get the expiry time
+          PAYLOAD=$(echo $TOKEN | cut -d. -f2 | base64 --decode | jq -r .)
+          EXPIRY_TIME=$(echo $PAYLOAD | jq -r .exp)
+          CURRENT_TIME=$(date +%s)
+          
+          # Check if token is expired
+          if [[ $CURRENT_TIME -ge $EXPIRY_TIME ]]; then
+            echo "Token is expired"
+            exit 1
+          else
+            echo "Token is valid"
+          fi
 
       - name: Infrastructure Test - Check Kubernetes Nodes
         run: kubectl get nodes
@@ -73,6 +94,7 @@ jobs:
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
+
       - name: Set up KUBECONFIG
         run: |
           mkdir -p $HOME/.kube
@@ -82,5 +104,6 @@ jobs:
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
           kubectl rollout status deployment/group03 -n group03
+
       - name: Restart Deployment
         run: kubectl rollout restart deployment/group03 -n group03
