@@ -3,7 +3,7 @@ name: CI
 # Event triggers
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -46,7 +46,6 @@ jobs:
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
-
       - name: Create .kube directory
         run: mkdir -p $HOME/.kube
 
@@ -74,24 +73,14 @@ jobs:
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
-
       - name: Set up KUBECONFIG
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-
+        
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes-config/deploy.yaml
           kubectl rollout status deployment/group03 -n group03
-
       - name: Restart Deployment
         run: kubectl rollout restart deployment/group03 -n group03
-
-      # Additional steps to deploy Grafana.
-      - name: Create Grafana Namespace
-        run: |
-          kubectl create namespace grafana || true
-
-      - name: Deploy Grafana Deployment
-        run: kubectl apply -f kubernetes-config/grafana.yaml
