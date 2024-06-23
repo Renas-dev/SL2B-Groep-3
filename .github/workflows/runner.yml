@@ -46,20 +46,12 @@ jobs:
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
-      
+
       - name: Create .kube directory
         run: mkdir -p $HOME/.kube
 
       - name: Set up KUBECONFIG
         run: echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-
-      - name: Install NGINX Ingress Controller
-        run: |
-          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-
-      - name: Wait for NGINX Ingress Controller deployment to be ready
-        run: |
-          kubectl wait --for=condition=available deployment/ingress-nginx-controller -n ingress-nginx --timeout=300s
 
       - name: Infrastructure Test - Check Kubernetes Nodes
         run: kubectl get nodes
@@ -94,21 +86,12 @@ jobs:
           kubectl rollout status deployment/group03 -n group03
 
       - name: Restart Deployment
-        run: |
-          kubectl rollout restart deployment/group03 -n group03
+        run: kubectl rollout restart deployment/group03 -n group03
 
       # Additional steps to deploy Grafana.
       - name: Create Grafana Namespace
-        run: kubectl create namespace grafana || true
+        run: |
+          kubectl create namespace grafana || true
 
       - name: Deploy Grafana Deployment
-        run: kubectl apply -f kubernetes-config/grafana-deployment.yaml
-
-      - name: Deploy Grafana Service
-        run: kubectl apply -f kubernetes-config/grafana-service.yaml
-
-      - name: Deploy Grafana Ingress
-        run: kubectl apply -f kubernetes-config/grafana-ingress.yaml
-
-      - name: Check Grafana Deployment Status
-        run: kubectl rollout status deployment/grafana -n grafana
+        run: kubectl apply -f kubernetes-config/grafana.yaml
