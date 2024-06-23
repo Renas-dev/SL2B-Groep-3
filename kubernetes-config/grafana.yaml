@@ -38,23 +38,22 @@ spec:
               name: http-grafana
               protocol: TCP
           readinessProbe:
-            failureThreshold: 3
             httpGet:
               path: /robots.txt
               port: 3000
               scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            successThreshold: 1
-            timeoutSeconds: 2
-          livenessProbe:
+              initialDelaySeconds: 10
+              periodSeconds: 30
+              timeoutSeconds: 2
             failureThreshold: 3
-            initialDelaySeconds: 30
-            periodSeconds: 10
             successThreshold: 1
+          livenessProbe:
             tcpSocket:
               port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
             timeoutSeconds: 1
+            failureThreshold: 3
           resources:
             requests:
               cpu: 250m
@@ -66,6 +65,7 @@ spec:
         - name: grafana-pv
           persistentVolumeClaim:
             claimName: grafana-pvc
+
 ---
 apiVersion: v1
 kind: Service
@@ -74,9 +74,10 @@ metadata:
 spec:
   ports:
     - port: 3000
-      protocol: TCP
       targetPort: http-grafana
+      protocol: TCP
+      name: http-grafana
   selector:
     app: grafana
-  sessionAffinity: None
   type: LoadBalancer
+
