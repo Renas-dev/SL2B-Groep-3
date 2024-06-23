@@ -60,11 +60,22 @@ jobs:
             echo "Token not found in kubeconfig"
             exit 1
           fi
+          echo "Token: $TOKEN"
+
           # Decode the token to get the expiry time
-          PAYLOAD=$(echo $TOKEN | cut -d. -f2 | base64 --decode | jq -r .)
+          PAYLOAD=$(echo $TOKEN | cut -d. -f2 | base64 --decode 2>/dev/null || echo "{}")
+          echo "Payload: $PAYLOAD"
+
           EXPIRY_TIME=$(echo $PAYLOAD | jq -r .exp)
+          if [ "$EXPIRY_TIME" = "null" ]; then
+            echo "Expiry time not found in token payload"
+            exit 1
+          fi
+          echo "Expiry Time: $EXPIRY_TIME"
+
           CURRENT_TIME=$(date +%s)
-          
+          echo "Current Time: $CURRENT_TIME"
+
           # Check if token is expired
           if [[ $CURRENT_TIME -ge $EXPIRY_TIME ]]; then
             echo "Token is expired"
