@@ -75,6 +75,7 @@ spec:
     - port: 3000
       protocol: TCP
       targetPort: http-grafana
+      name: http # Add this line
   selector:
     app: grafana
   sessionAffinity: None
