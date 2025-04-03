@@ -77,6 +77,11 @@
                 @Html.DisplayFor(model => model.Stall.Name)
             </dd>
         </dl>
+        <!-- Behavior of the animal -->
+        <div>
+            <h6>Behavior</h6>
+            <p>@Model.AnimalBehavior?.Behavior()</p>
+        </div>
         <!-- Edit & Go Back -->
         <div>
             <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a> |

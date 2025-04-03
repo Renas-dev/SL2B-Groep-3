@@ -73,6 +73,14 @@ namespace Dierentuin_App.Models
             High,
             Critical
         }
+
+        [NotMapped]
+        public IAnimalBehavior AnimalBehavior { get; set; }
+
+        public string? Behavior()
+        {
+            return AnimalBehavior?.Behavior();
+        }
     }
 }
 
