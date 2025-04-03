@@ -116,6 +116,20 @@ namespace Dierentuin_App.Controllers
             return View(animal);
         }
 
+        [HttpGet]
+        public IActionResult GetAnimalTemplate(string animal)
+        {
+            try
+            {
+                Animal template = AnimalFactory.GetFactory(animal).CreateAnimal();
+                return Json(template);
+            }
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
+        }
+
         // GET: Animals/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

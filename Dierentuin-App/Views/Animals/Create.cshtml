@@ -9,6 +9,48 @@
         <form asp-action="Create" class="d-flex flex-column gap-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <h1 class="">Create Animal</h1>
+            <div class="row mb-4">
+                <div class="col-12">
+                    <!-- Animal templates -->
+                    <h5>Quick Templates:</h5>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <!-- Elephant -->
+                        <button type="button" class="btn btn-secondary template-btn" data-animal="elephant">
+                            Elephant
+                        </button>
+
+                        <!-- Monkey -->
+                        <button type="button" class="btn btn-brown template-btn" data-animal="monkey"
+                                style="background-color: #8B4513; color: white;">
+                            Monkey
+                        </button>
+
+                        <!-- Lion -->
+                        <button type="button" class="btn template-btn" data-animal="lion"
+                                style="background-color: #E6BE8A; color: #333;">
+                            Lion
+                        </button>
+
+                        <!-- Penguin -->
+                        <button type="button" class="btn btn-dark template-btn" data-animal="penguin"
+                                style="border: 2px solid white;">
+                            Penguin
+                        </button>
+
+                        <!-- Tiger -->
+                        <button type="button" class="btn template-btn" data-animal="tiger"
+                                style="background-color: #FF7518; color: black; border: 2px dashed #000;">
+                            Tiger
+                        </button>
+
+                        <!-- Giraffe -->
+                        <button type="button" class="btn template-btn" data-animal="giraffe"
+                                style="background-color: #F9DC5C; color: #7E4A1C; border: 2px dotted #7E4A1C;">
+                            Giraffe
+                        </button>
+                    </div>
+                </div>
+            </div>
             <!-- Name -->
             <div class="row form-group">
                 <div class="col-5">
@@ -146,4 +188,31 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function() {
+            $('.template-btn').click(function() {
+                // Get animal type
+                const animal = $(this).data('animal');
+
+                // Get template data from server
+                $.ajax({
+                    url: '@Url.Action("GetAnimalTemplate", "Animals")',
+                    data: { animal: animal },
+                    success: function(data) {
+                        $('#Name').val(data.name);
+                        $('#Species').val(data.species);
+                        $('#Category').val(data.category);
+                        $('#Size').val(data.size);
+                        $('#DietaryClass').val(data.dietaryClass);
+                        $('#ActivityPattern').val(data.activityPattern);
+                        $('#Prey').val(data.prey);
+                        $('#Enclosure').val(data.enclosure);
+                        $('#SpaceRequirement').val(data.spaceRequirement);
+                        $('#SecurityRequirement').val(data.securityRequirement);
+                    }
+                });
+            });
+        });
+    </script>
 }
