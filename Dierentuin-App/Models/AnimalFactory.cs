@@ -132,7 +132,7 @@
     {
         public static IAnimalFactory GetFactory(string animal)
         {
-            return animal.ToLower() switch
+            return animal switch
             {
                 "lion" => new LionFactory(),
                 "monkey" => new MonkeyFactory(),

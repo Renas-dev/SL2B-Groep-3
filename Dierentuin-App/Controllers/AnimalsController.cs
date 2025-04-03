@@ -71,9 +71,24 @@ namespace Dierentuin_App.Controllers
             var animal = await _context.Animal
                 .Include(a => a.Stall)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (animal == null)
             {
                 return NotFound();
+            }
+
+            // Set the animal behavior based on the activity pattern
+            switch (animal.ActivityPattern)
+            {
+                case Animal.AnimalActivityPattern.Diurnal:
+                    animal.AnimalBehavior = new DiurnalBehavior();
+                    break;
+                case Animal.AnimalActivityPattern.Nocturnal:
+                    animal.AnimalBehavior = new NocturnalBehavior();
+                    break;
+                case Animal.AnimalActivityPattern.Cathemeral:
+                    animal.AnimalBehavior = new CathemeralBehavior();
+                    break;
             }
 
             return View(animal);
