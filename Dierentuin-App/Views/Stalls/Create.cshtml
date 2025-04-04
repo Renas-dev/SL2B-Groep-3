@@ -1,76 +1,114 @@
-﻿﻿@{
-    ViewData["Title"] = "Create";
+﻿@model Dierentuin_App.Models.Stall
+
+@{
+    ViewData["Title"] = "Create Stall";
 }
 
 <div class="row d-flex justify-content-center mt-3">
     <div class="col-11 col-md-8 border rounded-3 border-dark p-4 mb-3">
-        <form asp-action="Create" class="d-flex flex-column gap-4" method="post">
+        <form asp-action="Create" class="d-flex flex-column gap-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <h1 class="">Create Stall</h1>
-            <!-- Stall name -->
+            <h1>Create Stall</h1>
+
+            <!-- Stall templates as buttons -->
+            <h5>Quick Templates:</h5>
+            <div class="d-flex gap-3 flex-wrap">
+                <button type="button" class="btn btn-success stall-template-btn" data-preset="Tropical Rainforest">Tropical</button>
+                <button type="button" class="btn btn-warning stall-template-btn" data-preset="Savannah Enclosure">Savannah</button>
+                <button type="button" class="btn btn-info stall-template-btn" data-preset="Arctic Zone">Arctic</button>
+            </div>
+
+            <!-- Name -->
             <div class="row form-group">
                 <div class="col-5">
-                    <label>Name</label>
+                    <label asp-for="Name" class="control-label"></label>
                 </div>
                 <div class="col-7">
-                    <input name="Name" placeholder="Insert Stall name" class="form-control border-dark" />
+                    <input asp-for="Name" id="Name" class="form-control border-dark" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
             </div>
-            <!-- Stall climate -->
+
+            <!-- Climate -->
             <div class="row form-group">
                 <div class="col-5">
-                    <label>Climate</label>
+                    <label asp-for="Climate" class="control-label"></label>
                 </div>
                 <div class="col-7">
-                    <select name="Climate" class="form-control border-dark">
-                        <option value="Tropical">Tropical</option>
-                        <option value="Arid">Arid</option>
-                        <option value="Temperate">Temperate</option>
-                        <option value="Continental">Continental</option>
-                        <option value="Polar">Polar</option>
-                    </select>
+                    <input asp-for="Climate" id="Climate" class="form-control border-dark" />
+                    <span asp-validation-for="Climate" class="text-danger"></span>
                 </div>
             </div>
-            <!-- Stall habitat -->
+
+            <!-- HabitatType -->
             <div class="row form-group">
                 <div class="col-5">
-                    <label>Habitat Type</label>
+                    <label asp-for="HabitatType" class="control-label"></label>
                 </div>
                 <div class="col-7">
-                    <select name="HabitatType" class="form-control border-dark">
-                        <option value="Forest">Forest</option>
-                        <option value="Savanna">Savanna</option>
-                        <option value="Desert">Desert</option>
-                        <option value="Wetlands">Wetlands</option>
-                        <option value="Grassland">Grassland</option>
-                        <option value="Tundra">Tundra</option>
-                        <option value="Marine">Marine</option>
-                        <option value="Freshwater">Freshwater</option>
-                    </select>
+                    <input asp-for="HabitatType" id="HabitatType" class="form-control border-dark" />
+                    <span asp-validation-for="HabitatType" class="text-danger"></span>
                 </div>
             </div>
-            <!-- Stall security level -->
+
+            <!-- SecurityLevel -->
             <div class="row form-group">
                 <div class="col-5">
-                    <label>Security Level</label>
+                    <label asp-for="SecurityLevel" class="control-label"></label>
                 </div>
                 <div class="col-7">
-                    <select name="SecurityLevel" class="form-control border-dark">
-                        <option value="Low">Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
-                    </select>
+                    <input asp-for="SecurityLevel" id="SecurityLevel" class="form-control border-dark" />
+                    <span asp-validation-for="SecurityLevel" class="text-danger"></span>
                 </div>
-            </div> 
-            <!-- Submit button -->
+            </div>
+
+            <!-- Size -->
+            <div class="row form-group">
+                <div class="col-5">
+                    <label asp-for="Size" class="control-label"></label>
+                </div>
+                <div class="col-7">
+                    <input asp-for="Size" id="Size" class="form-control border-dark" />
+                    <span asp-validation-for="Size" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Submit -->
             <div class="row form-group">
                 <div class="col-12 col-lg-7 offset-lg-5">
-                    <input type="submit" value="Create" class="btn btn-dark w-100" />
+                    <input type="submit" value="Create Stall" class="btn btn-dark w-100" />
                 </div>
             </div>
         </form>
+
         <div class="mt-3">
-            <a href="Index" class="text-dark">Back to List</a>
+            <a asp-action="Index" class="text-dark">Back to List</a>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            $('.stall-template-btn').click(function () {
+                const preset = $(this).data('preset');
+
+                $.ajax({
+                    url: '@Url.Action("GetStallTemplate", "Stalls")',
+                    data: { preset: preset },
+                    success: function (data) {
+                        $('#Name').val(data.name);
+                        $('#Climate').val(data.climate);
+                        $('#HabitatType').val(data.habitatType);
+                        $('#SecurityLevel').val(data.securityLevel);
+                        $('#Size').val(data.size);
+                    }
+                });
+            });
+        });
+    </script>
+}

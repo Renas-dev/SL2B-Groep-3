@@ -7,6 +7,9 @@ using Microsoft.Extensions.Logging;
 using Dierentuin_App.Data;
 using Dierentuin_App.Models;
 using X.PagedList;
+using Dierentuin_App.Models.Factories;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Dierentuin_App.Models.Behavior;
 
 namespace Dierentuin_App.Controllers
 {
@@ -62,6 +65,8 @@ namespace Dierentuin_App.Controllers
             // Execute query and return paged list to view
             var pagedList = await stalls.ToPagedListAsync(pageNumber, pageSize);
             return View(pagedList);
+
+
         }
 
         // POST: Stalls/Index
@@ -101,13 +106,39 @@ namespace Dierentuin_App.Controllers
             // Save changes to database
             await _context.SaveChangesAsync();
 
+            // Clean stall based on habitat type
+            switch (stall.HabitatType?.ToLower())
+            {
+                case "rainforest":
+                    stall.CleaningStrategy = new RainforestCleaning();
+                    break;
+                case "tundra":
+                    stall.CleaningStrategy = new TundraCleaning();
+                    break;
+                case "desert":
+                    stall.CleaningStrategy = new DesertCleaning();
+                    break;
+                default:
+                    stall.CleaningStrategy = null;
+                    break;
+            }
+
+            // Store cleaning result for the view
+            ViewData["CleaningInstruction"] = stall.PerformCleaning();
+
             return View(stall);
         }
 
         // GET: Stalls/Create
-        public IActionResult Create()
+        public IActionResult Create(string preset)
         {
-            return View();
+            var stall = string.IsNullOrEmpty(preset)
+                ? new Stall()
+                : StallFactory.CreateStall(preset);
+
+            ViewBag.PresetOptions = new SelectList(StallFactory.GetPresetNames());
+
+            return View(stall);
         }
 
         // POST: Stalls/Create
@@ -125,6 +156,22 @@ namespace Dierentuin_App.Controllers
             return View(stall);
         }
 
+        [HttpGet]
+        public IActionResult GetStallTemplate(string preset)
+        {
+            var stall = StallFactory.CreateStall(preset);
+
+            return Json(new
+            {
+                name = stall.Name,
+                climate = stall.Climate,
+                habitatType = stall.HabitatType,
+                securityLevel = stall.SecurityLevel,
+                size = stall.Size
+            });
+        }
+
+
         // GET: Stalls/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -133,44 +180,57 @@ namespace Dierentuin_App.Controllers
                 return NotFound();
             }
 
-            var stall = await _context.Stall.FindAsync(id);
+            var stall = await _context.Stall
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == id);
+
             if (stall == null)
             {
                 return NotFound();
             }
+
+            // 👇 DEBUG: Log RowVersion voor controle
+            Console.WriteLine("Edit GET RowVersion: " + Convert.ToBase64String(stall.RowVersion ?? new byte[0]));
+
             return View(stall);
         }
 
         // POST: Stalls/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Climate,HabitatType,SecurityLevel,Size")] Stall stall)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Climate,HabitatType,SecurityLevel,Size,RowVersion")] Stall stall)
         {
             if (id != stall.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(stall);
+                    _context.Attach(stall);
+                    _context.Entry(stall).Property(s => s.RowVersion).OriginalValue = stall.RowVersion;
+                    _context.Entry(stall).State = EntityState.Modified;
+
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StallExists(stall.Id))
+                    var dbEntry = await _context.Stall.AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.Id == stall.Id);
+
+                    if (dbEntry == null)
                     {
-                        return NotFound();
+                        ModelState.AddModelError(string.Empty, "Deze stal is verwijderd door een andere gebruiker.");
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError(string.Empty, "Deze stal is bewerkt door een andere gebruiker terwijl jij deze aanpaste.");
+                        stall.RowVersion = dbEntry.RowVersion;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+
             return View(stall);
         }
 

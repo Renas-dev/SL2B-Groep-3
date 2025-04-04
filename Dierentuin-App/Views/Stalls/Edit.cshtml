@@ -9,6 +9,7 @@
         <form asp-action="Edit" class="d-flex flex-column gap-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" name="RowVersion" value="@Convert.ToBase64String(Model.RowVersion ?? new byte[0])" />
             <h1 class="">Edit Stall <i class="bi bi-pencil-square"></i></h1>
             <!-- Name -->
             <div class="row form-group">

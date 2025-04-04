@@ -58,6 +58,13 @@
         </dl>
     </div>
 
+    @if (ViewData["CleaningInstruction"] != null)
+    {
+        <div class="alert alert-info">
+            <strong>Cleaning Instructions:</strong> @ViewData["CleaningInstruction"]
+        </div>
+    }
+
     <div id="stall-container" class="stall-container">
         <h3>Animals in the Stall:</h3>
         @foreach (var animal in Model.Animals)
@@ -81,7 +88,6 @@
         <!-- Displaying a message that indicates whether it is currently day or night based on the isDay variable. -->
         <p class="text-end mt-5">It's currently @timeOfDay</p>
     </div>
-    
 
     <script>
 
