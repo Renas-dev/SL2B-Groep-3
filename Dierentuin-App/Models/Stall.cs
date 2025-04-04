@@ -15,11 +15,12 @@ namespace Dierentuin_App.Models
         public string HabitatType { get; set; } = string.Empty;
         public string SecurityLevel { get; set; } = string.Empty;
         public double Size { get; set; }
-        [Timestamp]
-        public byte[]? RowVersion { get; set; }
         public virtual ICollection<Animal> Animals { get; set; } = new List<Animal>();
+        public DateTime? LastFedAt { get; set; }
+
         [NotMapped]
         public ICleaningStrategy? CleaningStrategy { get; set; }
+
 
         public Stall()
         {
