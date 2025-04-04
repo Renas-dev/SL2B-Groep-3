@@ -69,6 +69,44 @@ namespace Dierentuin_App.Controllers
 
         }
 
+        [HttpPost]
+        public IActionResult FeedAllAnimals(int stallId)
+        {
+            var stall = _context.Stall.FirstOrDefault(s => s.Id == stallId);
+
+            if (stall == null)
+            {
+                return Json(new { success = false, message = "Stall not found." });
+            }
+
+            var now = DateTime.UtcNow;
+
+            // if fed too recently
+            if (stall.LastFedAt.HasValue && (now - stall.LastFedAt.Value).TotalMinutes < 10)
+            {
+                var minutesLeft = 10 - (now - stall.LastFedAt.Value).TotalMinutes;
+                var fedAtUnix = new DateTimeOffset(stall.LastFedAt.Value).ToUnixTimeMilliseconds();
+
+                return Json(new
+                {
+                    success = false,
+                    message = $"Animals already fed. Try again in {Math.Ceiling(minutesLeft)} minutes.",
+                    fedAt = fedAtUnix // ✅ pass fed time to client!
+                });
+            }
+
+            stall.LastFedAt = now;
+            _context.SaveChanges();
+
+            var updatedUnix = new DateTimeOffset(now).ToUnixTimeMilliseconds();
+
+            return Json(new
+            {
+                success = true,
+                fedAt = updatedUnix
+            });
+        }
+
         // POST: Stalls/Index
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -180,57 +218,44 @@ namespace Dierentuin_App.Controllers
                 return NotFound();
             }
 
-            var stall = await _context.Stall
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Id == id);
-
+            var stall = await _context.Stall.FindAsync(id);
             if (stall == null)
             {
                 return NotFound();
             }
-
-            // 👇 DEBUG: Log RowVersion voor controle
-            Console.WriteLine("Edit GET RowVersion: " + Convert.ToBase64String(stall.RowVersion ?? new byte[0]));
-
             return View(stall);
         }
 
         // POST: Stalls/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Climate,HabitatType,SecurityLevel,Size,RowVersion")] Stall stall)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Climate,HabitatType,SecurityLevel,Size")] Stall stall)
         {
             if (id != stall.Id)
+            {
                 return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Attach(stall);
-                    _context.Entry(stall).Property(s => s.RowVersion).OriginalValue = stall.RowVersion;
-                    _context.Entry(stall).State = EntityState.Modified;
-
+                    _context.Update(stall);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    var dbEntry = await _context.Stall.AsNoTracking()
-                        .FirstOrDefaultAsync(s => s.Id == stall.Id);
-
-                    if (dbEntry == null)
+                    if (!StallExists(stall.Id))
                     {
-                        ModelState.AddModelError(string.Empty, "Deze stal is verwijderd door een andere gebruiker.");
+                        return NotFound();
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Deze stal is bewerkt door een andere gebruiker terwijl jij deze aanpaste.");
-                        stall.RowVersion = dbEntry.RowVersion;
+                        throw;
                     }
                 }
+                return RedirectToAction(nameof(Index));
             }
-
             return View(stall);
         }
 
