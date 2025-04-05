@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Dierentuin_App.Models.Patterns.Composite;
 
 namespace Dierentuin_App.Models
 {
-    public class Animal
+    public class Animal : IZooComponent
     {
         [Key] // Primary Key
         public int Id { get; set; }
@@ -81,7 +82,14 @@ namespace Dierentuin_App.Models
         {
             return AnimalBehavior?.Behavior();
         }
+        public string GetInfo()
+        {
+            return $"Animal: {Name} - Species: {Species} - Space: {SpaceRequirement} m²";
+        }
+
+        public double GetSpace()
+        {
+            return SpaceRequirement;
+        }
     }
 }
-
-
