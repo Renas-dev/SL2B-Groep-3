@@ -1,4 +1,5 @@
-﻿@model Dierentuin_App.Models.Animal
+﻿@using Dierentuin_App.Models.AnimalDecorator
+@model Dierentuin_App.Models.Animal
 
 @{
     ViewData["Title"] = "Details";
@@ -75,6 +76,13 @@
             </dt>
             <dd class = "col-sm-6">
                 @Html.DisplayFor(model => model.Stall.Name)
+            </dd>
+            <!-- Characteristics section -->
+            <dt class="col-sm-6">
+                Special Characteristics:
+            </dt>
+            <dd class="col-sm-6">
+                @AnimalCharacteristicDecorator.GetDecoratedCharacteristics(Model)
             </dd>
         </dl>
         <!-- Behavior of the animal -->
