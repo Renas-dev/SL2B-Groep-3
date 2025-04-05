@@ -10,6 +10,7 @@ using X.PagedList;
 using Dierentuin_App.Models.Factories;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Dierentuin_App.Models.Behavior;
+using Dierentuin_App.Models.Patterns.Composite;
 
 namespace Dierentuin_App.Controllers
 {
@@ -24,56 +25,39 @@ namespace Dierentuin_App.Controllers
             _dayNightService = dayNightService;
         }
 
-        // GET: Stalls/Index
         [HttpGet]
         public async Task<IActionResult> Index(string searchString, string climate, string habitatType, string securityLevel, int? page)
         {
-            // Use IQueryable to build query dynamically
             var stalls = _context.Stall.AsQueryable();
 
-            // Apply filters based on parameters
             if (!string.IsNullOrEmpty(searchString))
             {
-                var lowerSearchString = searchString.ToLower();
+                var lowerSearch = searchString.ToLower();
                 stalls = stalls.Where(s =>
-                    (s.Name != null && s.Name.ToLower().Contains(lowerSearchString)) ||
-                    (s.Climate != null && s.Climate.ToLower().Contains(lowerSearchString)) ||
-                    (s.HabitatType != null && s.HabitatType.ToLower().Contains(lowerSearchString))
+                    (s.Name != null && s.Name.ToLower().Contains(lowerSearch)) ||
+                    (s.Climate != null && s.Climate.ToLower().Contains(lowerSearch)) ||
+                    (s.HabitatType != null && s.HabitatType.ToLower().Contains(lowerSearch))
                 );
             }
 
             if (!string.IsNullOrEmpty(climate))
-            {
                 stalls = stalls.Where(s => s.Climate == climate);
-            }
-
             if (!string.IsNullOrEmpty(habitatType))
-            {
                 stalls = stalls.Where(s => s.HabitatType == habitatType);
-            }
-
             if (!string.IsNullOrEmpty(securityLevel))
-            {
                 stalls = stalls.Where(s => s.SecurityLevel == securityLevel);
-            }
 
-            // Number of items per page
             int pageSize = 10;
-            // Current page number (default is 1)
             int pageNumber = (page ?? 1);
-
-            // Execute query and return paged list to view
             var pagedList = await stalls.ToPagedListAsync(pageNumber, pageSize);
+
             return View(pagedList);
-
-
         }
 
         [HttpPost]
         public IActionResult FeedAllAnimals(int stallId)
         {
             var stall = _context.Stall.FirstOrDefault(s => s.Id == stallId);
-
             if (stall == null)
             {
                 return Json(new { success = false, message = "Stall not found." });
@@ -81,7 +65,6 @@ namespace Dierentuin_App.Controllers
 
             var now = DateTime.UtcNow;
 
-            // if fed too recently
             if (stall.LastFedAt.HasValue && (now - stall.LastFedAt.Value).TotalMinutes < 10)
             {
                 var minutesLeft = 10 - (now - stall.LastFedAt.Value).TotalMinutes;
@@ -91,7 +74,7 @@ namespace Dierentuin_App.Controllers
                 {
                     success = false,
                     message = $"Animals already fed. Try again in {Math.Ceiling(minutesLeft)} minutes.",
-                    fedAt = fedAtUnix // ✅ pass fed time to client!
+                    fedAt = fedAtUnix
                 });
             }
 
@@ -100,19 +83,13 @@ namespace Dierentuin_App.Controllers
 
             var updatedUnix = new DateTimeOffset(now).ToUnixTimeMilliseconds();
 
-            return Json(new
-            {
-                success = true,
-                fedAt = updatedUnix
-            });
+            return Json(new { success = true, fedAt = updatedUnix });
         }
 
-        // POST: Stalls/Index
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult IndexPost(string searchString, string climate, string habitatType, string securityLevel)
         {
-            // Redirect to the GET action to apply the filtering
             return RedirectToAction(nameof(Index), new { searchString, climate, habitatType, securityLevel });
         }
 
@@ -122,47 +99,30 @@ namespace Dierentuin_App.Controllers
             ViewData["IsDay"] = _dayNightService.IsDay;
 
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var stall = await _context.Stall
                 .Include(s => s.Animals)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (stall == null)
-            {
                 return NotFound();
-            }
 
-            // Calculate total space requirement of assigned animals
-            double totalSpaceRequirement = stall.Animals.Sum(a => a.SpaceRequirement);
-
-            // Update the stall size in the database
-            stall.Size = totalSpaceRequirement;
-
-            // Save changes to database
+            stall.Size = stall.Animals.Sum(a => a.SpaceRequirement);
             await _context.SaveChangesAsync();
 
-            // Clean stall based on habitat type
             switch (stall.HabitatType?.ToLower())
             {
-                case "rainforest":
-                    stall.CleaningStrategy = new RainforestCleaning();
-                    break;
-                case "tundra":
-                    stall.CleaningStrategy = new TundraCleaning();
-                    break;
-                case "desert":
-                    stall.CleaningStrategy = new DesertCleaning();
-                    break;
-                default:
-                    stall.CleaningStrategy = null;
-                    break;
+                case "rainforest": stall.CleaningStrategy = new RainforestCleaning(); break;
+                case "tundra": stall.CleaningStrategy = new TundraCleaning(); break;
+                case "desert": stall.CleaningStrategy = new DesertCleaning(); break;
+                default: stall.CleaningStrategy = null; break;
             }
 
-            // Store cleaning result for the view
             ViewData["CleaningInstruction"] = stall.PerformCleaning();
+
+            // ✅ Composite info output
+            ViewData["CompositeInfo"] = stall.GetInfo();
 
             return View(stall);
         }
@@ -209,20 +169,16 @@ namespace Dierentuin_App.Controllers
             });
         }
 
-
         // GET: Stalls/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var stall = await _context.Stall.FindAsync(id);
             if (stall == null)
-            {
                 return NotFound();
-            }
+
             return View(stall);
         }
 
@@ -232,9 +188,7 @@ namespace Dierentuin_App.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Climate,HabitatType,SecurityLevel,Size")] Stall stall)
         {
             if (id != stall.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -246,16 +200,13 @@ namespace Dierentuin_App.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!StallExists(stall.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(stall);
         }
 
@@ -263,16 +214,11 @@ namespace Dierentuin_App.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var stall = await _context.Stall
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var stall = await _context.Stall.FirstOrDefaultAsync(m => m.Id == id);
             if (stall == null)
-            {
                 return NotFound();
-            }
 
             return View(stall);
         }
@@ -288,6 +234,7 @@ namespace Dierentuin_App.Controllers
                 _context.Stall.Remove(stall);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Index));
         }
 

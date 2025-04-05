@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Dierentuin_App.Models.Behavior;
+using Dierentuin_App.Models.Patterns.Composite;
 
 namespace Dierentuin_App.Models
 {
-    public class Stall
+    public class Stall : IZooComponent
     {
         [Key]
         public int Id { get; set; }
@@ -32,6 +33,15 @@ namespace Dierentuin_App.Models
         {
             return CleaningStrategy?.Clean() ?? "No cleaning strategy assigned.";
         }
-    }
+        public string GetInfo()
+        {
+            string animalInfo = string.Join("\n", Animals.Select(a => a.GetInfo()));
+            return $"Stall: {Name} ({HabitatType})\nAnimals:\n{animalInfo}";
+        }
 
+        public double GetSpace()
+        {
+            return Animals.Sum(a => a.GetSpace());
+        }
+    }
 }

@@ -5,7 +5,7 @@
 namespace Dierentuin_App.Migrations
 {
     /// <inheritdoc />
-    public partial class init3 : Migration
+    public partial class AddLastFedAtToStall : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
