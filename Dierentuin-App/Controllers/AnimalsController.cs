@@ -17,6 +17,7 @@ namespace Dierentuin_App.Controllers
     {
         private readonly Dierentuin_AppContext _context;
         private readonly IMemoryCache _memoryCache;
+        private static readonly object _statisticsLock = new object();
 
         public AnimalsController(Dierentuin_AppContext context, IMemoryCache memoryCache)
         {
@@ -264,39 +265,48 @@ namespace Dierentuin_App.Controllers
         {
             // Cache key
             const string cacheKey = "AnimalStatistics";
+            Dictionary<string, object> cachedStats;
 
-            // Get new statistics with a cache miss
-            if (!_memoryCache.TryGetValue(cacheKey, out Dictionary<string, object> cachedStats))
+            // Get statistics from cache miss (without locking)
+            if (!_memoryCache.TryGetValue(cacheKey, out cachedStats))
             {
-                var animals = await _context.Animal.Include(a => a.Stall).ToListAsync();
-
-                // Group by stall name and count dietary classes
-                var grouped = animals
-                    .GroupBy(a => a.Stall.Name)
-                    .Select(g => new
-                    {
-                        Stall = g.Key,
-                        Carnivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Carnivore),
-                        Herbivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Herbivore),
-                        Omnivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Omnivore),
-                        Insectivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Insectivore),
-                        Piscivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Piscivore),
-                    }).ToList();
-
-                // Store arrays in a dictionary
-                cachedStats = new Dictionary<string, object>
+                // Monitor Object
+                lock (_statisticsLock)
                 {
-                    ["StallNames"] = grouped.Select(m => m.Stall).ToArray(),
-                    ["Carnivores"] = grouped.Select(m => m.Carnivores).ToArray(),
-                    ["Herbivores"] = grouped.Select(m => m.Herbivores).ToArray(),
-                    ["Omnivores"] = grouped.Select(m => m.Omnivores).ToArray(),
-                    ["Insectivores"] = grouped.Select(m => m.Insectivores).ToArray(),
-                    ["Piscivores"] = grouped.Select(m => m.Piscivores).ToArray(),
-                    ["LastUpdated"] = DateTime.Now,
-                };
+                    // Double check another thread updated the cache
+                    if (!_memoryCache.TryGetValue(cacheKey, out cachedStats))
+                    {
+                        var animals = _context.Animal.Include(a => a.Stall).ToList();
 
-                // Store in cache with a 5 min expiration
-                _memoryCache.Set(cacheKey, cachedStats, TimeSpan.FromMinutes(5));
+                        // Group by stall name and count dietary classes
+                        var grouped = animals
+                            .GroupBy(a => a.Stall.Name)
+                            .Select(g => new
+                            {
+                                Stall = g.Key,
+                                Carnivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Carnivore),
+                                Herbivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Herbivore),
+                                Omnivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Omnivore),
+                                Insectivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Insectivore),
+                                Piscivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Piscivore),
+                            }).ToList();
+
+                        // Store arrays in a dictionary
+                        cachedStats = new Dictionary<string, object>
+                        {
+                            ["StallNames"] = grouped.Select(m => m.Stall).ToArray(),
+                            ["Carnivores"] = grouped.Select(m => m.Carnivores).ToArray(),
+                            ["Herbivores"] = grouped.Select(m => m.Herbivores).ToArray(),
+                            ["Omnivores"] = grouped.Select(m => m.Omnivores).ToArray(),
+                            ["Insectivores"] = grouped.Select(m => m.Insectivores).ToArray(),
+                            ["Piscivores"] = grouped.Select(m => m.Piscivores).ToArray(),
+                            ["LastUpdated"] = DateTime.Now,
+                        };
+
+                        // Store in cache with a 5 min expiration
+                        _memoryCache.Set(cacheKey, cachedStats, TimeSpan.FromMinutes(5));
+                    }
+                }
             }
 
             // Use the statistics (cache or newly grabbed)
