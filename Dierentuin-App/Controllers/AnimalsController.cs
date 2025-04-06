@@ -18,7 +18,6 @@ namespace Dierentuin_App.Controllers
         private readonly Dierentuin_AppContext _context;
         private readonly IMemoryCache _memoryCache;
 
-        // Update your constructor to accept the cache
         public AnimalsController(Dierentuin_AppContext context, IMemoryCache memoryCache)
         {
             _context = context;
@@ -271,6 +270,7 @@ namespace Dierentuin_App.Controllers
             {
                 var animals = await _context.Animal.Include(a => a.Stall).ToListAsync();
 
+                // Group by stall name and count dietary classes
                 var grouped = animals
                     .GroupBy(a => a.Stall.Name)
                     .Select(g => new
