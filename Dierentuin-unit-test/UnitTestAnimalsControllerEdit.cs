@@ -3,6 +3,8 @@ using Dierentuin_App.Data;
 using Dierentuin_App.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Moq;
 using Xunit;
 
 namespace Dierentuin_unit_test
@@ -11,6 +13,7 @@ namespace Dierentuin_unit_test
     {
         private AnimalsController _controller;
         private DbContextOptions<Dierentuin_AppContext> _options;
+        private Mock<IMemoryCache> _mockMemoryCache;
 
         public UnitTestAnimalsControllerEdit()
         {
@@ -18,6 +21,9 @@ namespace Dierentuin_unit_test
             _options = new DbContextOptionsBuilder<Dierentuin_AppContext>()
                 .UseInMemoryDatabase(databaseName: "Test_Database")
                 .Options;
+
+            // Set up mock memory cache
+            _mockMemoryCache = new Mock<IMemoryCache>();
         }
 
         [Fact]
@@ -45,7 +51,7 @@ namespace Dierentuin_unit_test
                 await context.SaveChangesAsync();
 
                 // Arrange: Initialize the controller after adding the test animal
-                _controller = new AnimalsController(context);
+                _controller = new AnimalsController(context, _mockMemoryCache.Object);
 
                 // Act: Retrieve the existing animal to update
                 var existingAnimal = await context.Animal.FindAsync(6);

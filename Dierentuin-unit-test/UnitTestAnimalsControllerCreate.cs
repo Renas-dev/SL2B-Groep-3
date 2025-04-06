@@ -1,15 +1,10 @@
 ﻿using Dierentuin_App.Controllers;
 using Dierentuin_App.Data;
 using Dierentuin_App.Models;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
+using Moq;
 using Xunit;
 
 namespace Dierentuin_unit_test
@@ -18,6 +13,7 @@ namespace Dierentuin_unit_test
     {
         private AnimalsController _controller;
         private DbContextOptions<Dierentuin_AppContext> _options;
+        private Mock<IMemoryCache> _mockMemoryCache;
 
         public UnitTestAnimalsControllerCreate()
         {
@@ -25,6 +21,9 @@ namespace Dierentuin_unit_test
             _options = new DbContextOptionsBuilder<Dierentuin_AppContext>()
                 .UseInMemoryDatabase(databaseName: "Test_Database")
                 .Options;
+
+            // Set up mock memory cache
+            _mockMemoryCache = new Mock<IMemoryCache>();
         }
 
         [Fact]
@@ -35,7 +34,7 @@ namespace Dierentuin_unit_test
                 // Arrange: Add a test stall to the in-memory database
                 context.Stall.Add(new Stall { Id = 1, Name = "Test Stall" });
                 await context.SaveChangesAsync();
-                _controller = new AnimalsController(context);
+                _controller = new AnimalsController(context, _mockMemoryCache.Object);
 
                 // Arrange: create a new animal to the in-memory database
                 var newAnimal = new Animal
@@ -48,9 +47,9 @@ namespace Dierentuin_unit_test
                     ActivityPattern = Animal.AnimalActivityPattern.Nocturnal,
                     Prey = "Deer",
                     Enclosure = "Forest",
-                    SpaceRequirement = 150.25, 
+                    SpaceRequirement = 150.25,
                     SecurityRequirement = Animal.AnimalSecurityRequirement.High,
-                    StallId = 1 
+                    StallId = 1
                 };
 
                 // Act: Attempt to create the new animal

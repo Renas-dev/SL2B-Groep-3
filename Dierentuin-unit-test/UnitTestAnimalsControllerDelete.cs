@@ -3,11 +3,8 @@ using Dierentuin_App.Data;
 using Dierentuin_App.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
+using Moq;
 using Xunit;
 
 namespace Dierentuin_unit_test
@@ -16,6 +13,7 @@ namespace Dierentuin_unit_test
     {
         private AnimalsController _controller;
         private DbContextOptions<Dierentuin_AppContext> _options;
+        private Mock<IMemoryCache> _mockMemoryCache;
 
         public UnitTestAnimalsControllerDelete()
         {
@@ -23,6 +21,9 @@ namespace Dierentuin_unit_test
             _options = new DbContextOptionsBuilder<Dierentuin_AppContext>()
                 .UseInMemoryDatabase(databaseName: "Test_Database")
                 .Options;
+
+            // Set up mock memory cache
+            _mockMemoryCache = new Mock<IMemoryCache>();
         }
 
         // Valid Animal Test
@@ -49,7 +50,7 @@ namespace Dierentuin_unit_test
                 });
                 await context.SaveChangesAsync();
 
-                _controller = new AnimalsController(context);
+                _controller = new AnimalsController(context, _mockMemoryCache.Object);
 
                 // Act: Attempt to delete the test animal
                 var result = await _controller.DeleteConfirmed(2) as RedirectToActionResult;
@@ -83,13 +84,13 @@ namespace Dierentuin_unit_test
                 });
                 await context.SaveChangesAsync();
 
-                _controller = new AnimalsController(context);
+                _controller = new AnimalsController(context, _mockMemoryCache.Object);
 
                 // Act: Attempt to delete non-existent animal (Id = 999)
-                var result = await _controller.DeleteConfirmed(999) as NotFoundResult; 
+                var result = await _controller.DeleteConfirmed(999) as NotFoundResult;
 
                 // Assert: Verify that NotFoundResult is returned
-                Assert.NotNull(result); 
+                Assert.NotNull(result);
             }
         }
     }
