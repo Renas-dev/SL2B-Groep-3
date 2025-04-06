@@ -11,6 +11,7 @@ builder.Services.AddDbContext<Dierentuin_AppContext>(options =>
 // Add services to the container
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<Dierentuin_App.Services.DayNightService>();
+builder.Services.AddMemoryCache();
 
 // Removes the required attribute for non-nullable reference types
 builder.Services.AddControllers(

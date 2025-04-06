@@ -1,0 +1,71 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Animal Statistics";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<canvas id="dietChart" width="800" height="400"></canvas>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('dietChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(ViewBag.stallNames)),
+                datasets: [
+                    {
+                        label: 'Carnivors',
+                        data: @Html.Raw(Json.Serialize(ViewBag.carnivores)),
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    },
+                    {
+                        label: 'Herbivores',
+                        data: @Html.Raw(Json.Serialize(ViewBag.herbivores)),
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)'
+                    },
+                    {
+                        label: 'Omnivores',
+                        data: @Html.Raw(Json.Serialize(ViewBag.omnivores)),
+                        backgroundColor: 'rgba(255, 206, 86, 0.7)'
+                    },
+                    {
+                        label: 'Insectivores',
+                        data: @Html.Raw(Json.Serialize(ViewBag.insectivores)),
+                        backgroundColor: 'rgba(153, 102, 255, 0.7)'
+                    },
+                    {
+                        label: 'Piscivores',
+                        data: @Html.Raw(Json.Serialize(ViewBag.piscivores)),
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'How many animals per stall' }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true, 
+                        title: {
+                            display: true,
+                            text: 'Amount Animals' 
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Stalls'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

@@ -9,16 +9,20 @@ using Dierentuin_App.Data;
 using Dierentuin_App.Models;
 using X.PagedList;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Dierentuin_App.Controllers
 {
     public class AnimalsController : Controller
     {
         private readonly Dierentuin_AppContext _context;
+        private readonly IMemoryCache _memoryCache;
 
-        public AnimalsController(Dierentuin_AppContext context)
+        // Update your constructor to accept the cache
+        public AnimalsController(Dierentuin_AppContext context, IMemoryCache memoryCache)
         {
             _context = context;
+            _memoryCache = memoryCache;
         }
 
         // GET: Animals
@@ -254,6 +258,57 @@ namespace Dierentuin_App.Controllers
             await UpdateStallSize(stallId);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AnimalStatistics()
+        {
+            // Cache key
+            const string cacheKey = "AnimalStatistics";
+
+            // Get new statistics with a cache miss
+            if (!_memoryCache.TryGetValue(cacheKey, out Dictionary<string, object> cachedStats))
+            {
+                var animals = await _context.Animal.Include(a => a.Stall).ToListAsync();
+
+                var grouped = animals
+                    .GroupBy(a => a.Stall.Name)
+                    .Select(g => new
+                    {
+                        Stall = g.Key,
+                        Carnivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Carnivore),
+                        Herbivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Herbivore),
+                        Omnivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Omnivore),
+                        Insectivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Insectivore),
+                        Piscivores = g.Count(a => a.DietaryClass == Animal.AnimalDietaryClass.Piscivore),
+                    }).ToList();
+
+                // Store arrays in a dictionary
+                cachedStats = new Dictionary<string, object>
+                {
+                    ["StallNames"] = grouped.Select(m => m.Stall).ToArray(),
+                    ["Carnivores"] = grouped.Select(m => m.Carnivores).ToArray(),
+                    ["Herbivores"] = grouped.Select(m => m.Herbivores).ToArray(),
+                    ["Omnivores"] = grouped.Select(m => m.Omnivores).ToArray(),
+                    ["Insectivores"] = grouped.Select(m => m.Insectivores).ToArray(),
+                    ["Piscivores"] = grouped.Select(m => m.Piscivores).ToArray(),
+                    ["LastUpdated"] = DateTime.Now,
+                };
+
+                // Store in cache with a 5 min expiration
+                _memoryCache.Set(cacheKey, cachedStats, TimeSpan.FromMinutes(5));
+            }
+
+            // Use the statistics (cache or newly grabbed)
+            ViewBag.StallNames = cachedStats["StallNames"];
+            ViewBag.Carnivores = cachedStats["Carnivores"];
+            ViewBag.Herbivores = cachedStats["Herbivores"];
+            ViewBag.Omnivores = cachedStats["Omnivores"];
+            ViewBag.Insectivores = cachedStats["Insectivores"];
+            ViewBag.Piscivores = cachedStats["Piscivores"];
+            ViewBag.LastUpdated = cachedStats["LastUpdated"];
+
+            return View();
         }
 
         private async Task UpdateStallSize(int stallId)

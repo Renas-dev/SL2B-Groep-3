@@ -7,7 +7,7 @@ using Dierentuin_App.Data;
 using Dierentuin_App.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using Xunit;
 using X.PagedList;
@@ -28,6 +28,7 @@ namespace Dierentuin_unit_test
         {
             // Arrange
             var options = GetDbContextOptions();
+            var mockMemoryCache = new Mock<IMemoryCache>();
             using (var context = new Dierentuin_AppContext(options))
             {
                 // Insert animal data to database
@@ -40,7 +41,7 @@ namespace Dierentuin_unit_test
                 context.AddRange(testData);
                 context.SaveChanges();
 
-                var controller = new AnimalsController(context);
+                var controller = new AnimalsController(context, mockMemoryCache.Object);
 
                 // Act
                 var result = await controller.Index("lion", Animal.AnimalSize.Large, Animal.AnimalDietaryClass.Carnivore, null, Animal.AnimalSecurityRequirement.High, 1);
